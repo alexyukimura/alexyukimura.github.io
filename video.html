@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Video</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        video {
+            width: 100%;
+            max-width: 480px; /* 设置最大宽度 */
+            height: auto; /* 保持宽高比 */
+            margin-bottom: 20px;
+            object-fit: contain; /* 保持视频的宽高比并在容器内完整显示 */
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px; /* 可选：增加按钮与视频之间的间距 */
+        }
+        button {
+            margin: 0 50px; /* 调整按钮之间的间距 */
+            transform: scale(1.8); /* 放大按钮5倍 */
+            transform-origin: center; /* 设置放大中心点为按钮中心 */
+        }
+    </style>
+</head>
+<body>
+    <video id="videoPlayer" controls>
+        <source id="videoSource" src="../guide/unity/resources/1725802329169.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="button-container">
+        <button id="randomButton">随机视频</button>
+        <button id="resetButton">重置视频</button>
+    </div>
+
+    <script src="./video.js"></script>
+</body>
+</html>

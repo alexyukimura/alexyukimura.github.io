@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head> 
+    <style type="text/css">gamemonetize-video, gamemonetize-walkthrough 
+        { 
+            width:480px; 
+            height:100%; 
+        }</style>
+        <iframe id="gamemonetize-walkthrough" 
+            style="border-radius: 5px;" width="480px" height="100" 
+            scrolling="no" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen="allowfullscreen"> </iframe>
 </head>
 <body>
-    <div id="gamemonetize-video"></div>
-    <script type="text/javascript">
-       window.VIDEO_OPTIONS = {
-           gameid : "dglut8w6rvhjdnc7086602sdeis6vr4n",
-           width  : "100%",
-           height : "480px",
-           color  : "#3f007e",
-           getAds  : "true"
-       };
-       (function (a, b, c) {
-          var d = a.getElementsByTagName(b)[0];
-          a.getElementById(c) || (a = a.createElement(b), a.id = c, a.src = "https://api.gamemonetize.com/video.js", d.parentNode.insertBefore(a, d))
-       })(document, "script", "gamemonetize-video-api"); 
-    </script>  
+    <div id="gamemonetize-video"></div> 
+    <iframe width="800" height="600" 
+    src="https://gamemonetize.video/index.php?domain=gamemonetize.com&gameid=dglut8w6rvhjdnc7086602sdeis6vr4n&game=gamemonetize-video&getads=true&color=3f007e" 
+    title="Gamemonetize Ads" 
+    frameborder="0" 
+    allowfullscreen></iframe>
 </body>
-</html
+</html>
