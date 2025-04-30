@@ -58,10 +58,10 @@ export function notifyOwner() {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
-            appToken: "AT_UdboXuLNlSgFYGGooZMBlfCkqu7OZnre",
+            appToken: "",
             content: "您好，有人需要您挪车，请及时处理。",
             contentType: 1,
-            uids: ["UID_PaVViFr9ffhUMyDMgxRO8mTYINoK"]
+            uids: [""]
         })
     })
     .then(response => response.json())
@@ -102,10 +102,10 @@ export function submitPhoneNumber() {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
-            appToken: "AT_UdboXuLNlSgFYGGooZMBlfCkqu7OZnre",
+            appToken: "",
             content: `您好，有人需要您挪车，联系电话：${phoneNumber}`,
             contentType: 1,
-            uids: ["UID_PaVViFr9ffhUMyDMgxRO8mTYINoK"]
+            uids: [""]
         })
     })
     .then(response => response.json())
