@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作核心计算</title>
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 结果样式 */
+        #result {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 20px;
+        }
+      </style>
+</head>
+<body>
+    <h1>工作核心计算</h1>
+    <form id="workForm">
+        <label for="dailySalary">平均日薪酬 元/日(月薪除22.5):</label>
+        <input type="number" id="dailySalary" name="dailySalary" required><br><br>
+
+        <label for="dailyWorkTime">工作时长 下班时间-上班时间:</label>
+        <input type="number" id="dailyWorkTime" name="dailyWorkTime" required><br><br>
+
+        <label for="commuteDuration">通勤时长 小时:</label>
+        <input type="number" id="commuteDuration" name="commuteDuration" required><br><br>
+
+        <label for="freeDuration">摸鱼时长 不干活+吃饭+午休:</label>
+        <input type="number" id="freeDuration" name="freeDuration" required><br><br>
+
+        <label for="sumWeight">综合环境系数:</label>
+        <input type="number" id="sumWeight" name="sumWeight" required><br><br>
+
+        <label for="education">教育背景:</label>
+        <select id="education" name="education">
+            <option value="8">专科及以下</option>
+            <option value="10">普通本科</option>
+            <option value="12">高级本科</option>
+            <option value="14">普通硕士</option>
+            <option value="16">高级硕士</option>
+            <option value="18">普通博士</option>
+            <option value="20">高级博士</option>
+        </select><br><br>
+
+        <label for="env">工作环境:</label>
+        <select id="env" name="env">
+            <option value="8">封闭研发_没有外网</option>
+            <option value="9">办公大楼_没有商业</option>
+            <option value="10">正常街道_有饭馆有超市</option>
+            <option value="11">繁华商业街</option>
+        </select><br><br>
+
+        <label for="female">女性同事数量:</label>
+        <select id="female" name="female">
+            <option value="9">没有</option>
+            <option value="10">不多不少</option>
+            <option value="11">很多</option>
+        </select><br><br>
+
+        <label for="mate">同事质量:</label>
+        <select id="mate" name="mate">
+            <option value="95">SB很多</option>
+            <option value="100">普通很多</option>
+            <option value="105">优秀很多</option>
+        </select><br><br>
+
+        <label for="career">职业类型:</label>
+        <select id="career" name="career">
+            <option value="100">游戏策划_运营_测试</option>
+            <option value="105">游戏美术</option>
+            <option value="110">游戏程序</option>
+            <option value="115">干活的领导</option>
+        </select><br><br>
+
+        <label for="workStartEight">是否8点上班:</label>
+        <select id="workStartEight" name="workStartEight">
+            <option value="95">是</option>
+            <option value="100">否</option>
+        </select><br><br>
+
+        <button onclick="calculateWorkValue()">计算工作价值</button>
+    </form>
+
+    <h2>计算结果:</h2>
+    <p id="result"></p>
+
+    <script>
+        function calculateWorkValue() {
+            alert(`calculateWorkValue`);
+            const dailySalary = parseFloat(document.getElementById('dailySalary').value);
+            const dailyWorkTime = parseFloat(document.getElementById('dailyWorkTime').value);
+            const commuteDuration = parseFloat(document.getElementById('commuteDuration').value);
+            const freeDuration = parseFloat(document.getElementById('freeDuration').value);
+            const sumWeight = parseFloat(document.getElementById('sumWeight').value);
+            const education = parseFloat(document.getElementById('education').value);
+            const env = parseFloat(document.getElementById('env').value);
+            const female = parseFloat(document.getElementById('female').value);
+            const mate = parseFloat(document.getElementById('mate').value);
+            const career = parseFloat(document.getElementById('career').value);
+            const workStartEight = parseFloat(document.getElementById('workStartEight').value);
+
+            const sumWeightValue = calculateSumWeight(env, female, mate);
+            const workValue = calculateWorkValue(dailySalary, dailyWorkTime, commuteDuration, freeDuration, education, career, workStartEight, sumWeightValue);
+            const result = checkResult(workValue);
+            alert(`工作价值: ${workValue.toFixed(2)}, 结果: ${result}`);
+            document.getElementById('result').innerText = `工作价值: ${workValue.toFixed(2)}, 结果: ${result}`;
+        }
+
+        function calculateSumWeight(env, female, mate) {
+            const mult = env * female * mate * 1.0;
+            return mult / (10.0 * 10.0 * 100.0);
+        }
+
+        function calculateWorkValue(dailySalary, dailyWorkTime, commuteDuration, freeDuration, education, career, workStartEight, sumWeight) {
+            const sum = dailySalary * sumWeight;
+            const divisor = 35 * (dailyWorkTime + commuteDuration - 0.5 * freeDuration) * education * career / (10 * 100.0);
+            return sum * workStartEight / (divisor * 100.0);
+        }
+
+        function checkResult(val) {
+            if (val < 2) {
+                return "低于2很惨";
+            }
+            if (val >= 3 && val < 4) {
+                return "高于3很爽";
+            }
+            if (val > 4) {
+                return "高于4爽到爆";
+            }
+            return "低于2很惨";
+        }
+    </script>
+</body>
+</html>
