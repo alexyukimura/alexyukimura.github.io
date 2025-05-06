@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>云南昆明一日游旅行规划表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --a4-width: 210mm;
+            --a4-height: 297mm;
+            --margin: 10mm;
+            --main-font: 'Noto Sans SC', Arial, sans-serif;
+            --primary: #222;
+            --accent: #2d8cf0;
+            --gray: #888;
+            --border: #bbb;
+            --bg: #fff;
+            --table-header: #f5f5f5;
+        }
+
+        html,
+        body {
+            width: var(--a4-width);
+            height: var(--a4-height);
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            font-family: var(--main-font);
+            color: var(--primary);
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            box-sizing: border-box;
+            padding: var(--margin);
+            width: calc(var(--a4-width) - 2 * var(--margin));
+            height: calc(var(--a4-height) - 2 * var(--margin));
+            background: var(--bg);
+            position: relative;
+        }
+
+        .print-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        @media print {
+            .print-btn {
+                display: none;
+            }
+
+            body {
+                box-shadow: none;
+            }
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .title-section h1 {
+            font-size: 2.1em;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            letter-spacing: 2px;
+        }
+
+        .title-section .meta {
+            font-size: 1em;
+            color: var(--gray);
+            margin-bottom: 2px;
+        }
+
+        .title-section .weather {
+            font-size: 1em;
+            color: var(--accent);
+            margin-bottom: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 18px;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px 8px 12px;
+            background: #fafafa;
+            margin-bottom: 0;
+        }
+
+        .section h2 {
+            font-size: 1.1em;
+            margin: 0 0 6px 0;
+            color: var(--accent);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon {
+            font-size: 1em;
+            color: var(--accent);
+        }
+
+        .timeline {
+            border-left: 3px dashed var(--accent);
+            margin-left: 10px;
+            padding-left: 16px;
+        }
+
+        .timeline-item {
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -19px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .timeline-time {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1em;
+            margin-bottom: 2px;
+        }
+
+        .timeline-desc {
+            font-size: 0.98em;
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 6px;
+            font-size: 0.98em;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border);
+            padding: 4px 6px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--table-header);
+            font-weight: 700;
+        }
+
+        .tips,
+        .contacts {
+            font-size: 0.97em;
+            color: var(--primary);
+            margin-bottom: 2px;
+        }
+
+        .budget {
+            font-size: 0.97em;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .cut-line {
+            border-top: 1px dashed #bbb;
+            margin: 8px 0 0 0;
+            height: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="print-btn" onclick="window.print()"><i class="fa fa-print"></i> 打印</button>
+    <div class="title-section">
+        <h1>云南昆明一日游</h1>
+        <div class="meta">2024年6月10日（星期一） | 旅行者：张三</div>
+        <div class="weather"><i class="fa fa-cloud"></i> 多云，22°C/15°C，微风</div>
+    </div>
+    <div class="grid">
+        <div class="section">
+            <h2><i class="fa fa-list icon"></i> 行程概览</h2>
+            <table>
+                <tr>
+                    <th>时间</th>
+                    <th>活动</th>
+                    <th>地点</th>
+                </tr>
+                <tr>
+                    <td>08:00-09:00</td>
+                    <td><i class="fa fa-tree"></i> 翠湖公园晨游</td>
+                    <td>翠湖公园</td>
+                </tr>
+                <tr>
+                    <td>09:30-12:00</td>
+                    <td><i class="fa fa-mountain"></i> 石林风景区</td>
+                    <td>石林</td>
+                </tr>
+                <tr>
+                    <td>12:00-13:00</td>
+                    <td><i class="fa fa-utensils"></i> 彝族风味午餐</td>
+                    <td>石林景区附近</td>
+                </tr>
+                <tr>
+                    <td>14:00-16:00</td>
+                    <td><i class="fa fa-water"></i> 滇池/海埂大坝</td>
+                    <td>滇池</td>
+                </tr>
+                <tr>
+                    <td>17:00-19:00</td>
+                    <td><i class="fa fa-store"></i> 南屏步行街美食</td>
+                    <td>南屏步行街</td>
+                </tr>
+            </table>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-clock icon"></i> 详细时间表</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-time">08:00-09:00</div>
+                    <div class="timeline-desc"><i class="fa fa-tree"></i> 翠湖公园晨游（免费）</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">09:30-12:00</div>
+                    <div class="timeline-desc"><i class="fa fa-mountain"></i> 石林风景区（门票：70元，建议提前预订）</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">12:00-13:00</div>
+                    <div class="timeline-desc"><i class="fa fa-utensils"></i> 彝族风味午餐（人均60元）</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">14:00-16:00</div>
+                    <div class="timeline-desc"><i class="fa fa-water"></i> 滇池/海埂大坝（观鸟、散步，免费）</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">17:00-19:00</div>
+                    <div class="timeline-desc"><i class="fa fa-store"></i> 南屏步行街美食（推荐：过桥米线、汽锅鸡）</div>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-bus icon"></i> 交通信息</h2>
+            <ul class="tips">
+                <li><i class="fa fa-arrow-right"></i> 市区→石林：自驾/旅游大巴，约1小时</li>
+                <li><i class="fa fa-arrow-right"></i> 石林→滇池：自驾/大巴，约1小时</li>
+                <li><i class="fa fa-arrow-right"></i> 滇池→南屏步行街：公交/打车，约30分钟</li>
+            </ul>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-hotel icon"></i> 住宿与餐饮</h2>
+            <ul class="tips">
+                <li><b>推荐酒店：</b>昆明中心假日酒店（市中心，交通便利）</li>
+                <li><b>餐饮推荐：</b>桥香园（过桥米线）、建新园（汽锅鸡）</li>
+                <li><b>便利设施：</b>南屏街附近有多家便利店、药店</li>
+            </ul>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-info-circle icon"></i> 实用信息</h2>
+            <ul class="tips">
+                <li>携带雨具，云南早晚温差大</li>
+                <li>石林景区建议提前购票</li>
+                <li>滇池观鸟季节为11月至3月</li>
+                <li>注意防晒，补充水分</li>
+            </ul>
+            <div class="budget">预算参考：门票+餐饮+交通约300元/人</div>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-phone icon"></i> 紧急联系电话</h2>
+            <ul class="contacts">
+                <li><b>旅游咨询：</b> 0871-12301</li>
+                <li><b>报警/急救：</b> 110 / 120</li>
+                <li><b>酒店前台：</b> 0871-88888888</li>
+            </ul>
+        </div>
+    </div>
+    <div class="cut-line"></div>
+    <div style="text-align:center;font-size:0.9em;color:#aaa;margin-top:2px;">© 2024 云南一日游旅行规划表 | 适合A4打印</div>
+</body>
+
+</html>

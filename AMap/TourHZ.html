@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>杭州一日游·美食体验旅行规划表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --a4-width: 210mm;
+            --a4-height: 297mm;
+            --margin: 10mm;
+            --main-font: 'Noto Sans SC', Arial, sans-serif;
+            --primary: #222;
+            --accent: #2d8cf0;
+            --gray: #888;
+            --border: #bbb;
+            --bg: #fff;
+            --table-header: #f5f5f5;
+        }
+
+        html,
+        body {
+            width: var(--a4-width);
+            height: var(--a4-height);
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            font-family: var(--main-font);
+            color: var(--primary);
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            box-sizing: border-box;
+            padding: var(--margin);
+            width: calc(var(--a4-width) - 2 * var(--margin));
+            height: calc(var(--a4-height) - 2 * var(--margin));
+            background: var(--bg);
+            position: relative;
+        }
+
+        .print-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        @media print {
+            .print-btn {
+                display: none;
+            }
+
+            body {
+                box-shadow: none;
+            }
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .title-section h1 {
+            font-size: 2.1em;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            letter-spacing: 2px;
+        }
+
+        .title-section .meta {
+            font-size: 1em;
+            color: var(--gray);
+            margin-bottom: 2px;
+        }
+
+        .title-section .weather {
+            font-size: 1em;
+            color: var(--accent);
+            margin-bottom: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 18px;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px 8px 12px;
+            background: #fafafa;
+            margin-bottom: 0;
+        }
+
+        .section h2 {
+            font-size: 1.1em;
+            margin: 0 0 6px 0;
+            color: var(--accent);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon {
+            font-size: 1em;
+            color: var(--accent);
+        }
+
+        .timeline {
+            border-left: 3px dashed var(--accent);
+            margin-left: 10px;
+            padding-left: 16px;
+        }
+
+        .timeline-item {
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -19px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .timeline-time {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1em;
+            margin-bottom: 2px;
+        }
+
+        .timeline-desc {
+            font-size: 0.98em;
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 6px;
+            font-size: 0.98em;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border);
+            padding: 4px 6px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--table-header);
+            font-weight: 700;
+        }
+
+        .tips,
+        .contacts {
+            font-size: 0.97em;
+            color: var(--primary);
+            margin-bottom: 2px;
+        }
+
+        .budget {
+            font-size: 0.97em;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .cut-line {
+            border-top: 1px dashed #bbb;
+            margin: 8px 0 0 0;
+            height: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="print-btn" onclick="window.print()"><i class="fa fa-print"></i> 打印</button>
+    <div class="title-section">
+        <h1>杭州一日游·美食体验</h1>
+        <div class="meta">2024年6月10日（星期一） | 旅行者：李四</div>
+        <div class="weather"><i class="fa fa-cloud-sun"></i> 多云，28°C/20°C，微风</div>
+    </div>
+    <div class="grid">
+        <div class="section">
+            <h2><i class="fa fa-list icon"></i> 行程概览</h2>
+            <table>
+                <tr>
+                    <th>时间</th>
+                    <th>活动</th>
+                    <th>地点</th>
+                </tr>
+                <tr>
+                    <td>08:00-09:00</td>
+                    <td><i class="fa fa-water"></i> 西湖晨游</td>
+                    <td>断桥、白堤</td>
+                </tr>
+                <tr>
+                    <td>09:30-11:00</td>
+                    <td><i class="fa fa-pagelines"></i> 灵隐寺参观</td>
+                    <td>灵隐寺</td>
+                </tr>
+                <tr>
+                    <td>11:30-13:00</td>
+                    <td><i class="fa fa-utensils"></i> 河坊街午餐</td>
+                    <td>河坊街</td>
+                </tr>
+                <tr>
+                    <td>13:30-15:00</td>
+                    <td><i class="fa fa-landmark"></i> 南宋御街/胡雪岩故居</td>
+                    <td>南宋御街</td>
+                </tr>
+                <tr>
+                    <td>15:30-17:00</td>
+                    <td><i class="fa fa-leaf"></i> 龙井村品茶</td>
+                    <td>龙井村</td>
+                </tr>
+                <tr>
+                    <td>17:30-19:00</td>
+                    <td><i class="fa fa-store"></i> 湖滨夜市美食</td>
+                    <td>湖滨步行街</td>
+                </tr>
+            </table>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-clock icon"></i> 详细时间表</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-time">08:00-09:00</div>
+                    <div class="timeline-desc"><i class="fa fa-water"></i> 西湖晨游（断桥、白堤，免费）</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">09:30-11:00</div>
+                    <div class="timeline-desc"><i class="fa fa-pagelines"></i> 灵隐寺参观（门票：45元）</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">11:30-13:00</div>
+                    <div class="timeline-desc"><i class="fa fa-utensils"></i> 河坊街午餐（葱包烩、定胜糕、片儿川等，约50元）</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">13:30-15:00</div>
+                    <div class="timeline-desc"><i class="fa fa-landmark"></i> 南宋御街/胡雪岩故居（门票：20元）</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">15:30-17:00</div>
+                    <div class="timeline-desc"><i class="fa fa-leaf"></i> 龙井村品茶（体验茶文化，约60元）</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">17:30-19:00</div>
+                    <div class="timeline-desc"><i class="fa fa-store"></i> 湖滨夜市美食（猫耳朵、酱鸭、知味观点心，约60元）</div>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-bus icon"></i> 交通信息</h2>
+            <ul class="tips">
+                <li><i class="fa fa-arrow-right"></i> 西湖→灵隐寺：公交7路/出租车，约30分钟</li>
+                <li><i class="fa fa-arrow-right"></i> 灵隐寺→河坊街：公交/出租车，约40分钟</li>
+                <li><i class="fa fa-arrow-right"></i> 河坊街→南宋御街：步行10分钟</li>
+                <li><i class="fa fa-arrow-right"></i> 南宋御街→龙井村：公交/出租车，约30分钟</li>
+                <li><i class="fa fa-arrow-right"></i> 龙井村→湖滨步行街：公交/出租车，约40分钟</li>
+            </ul>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-hotel icon"></i> 住宿与餐饮</h2>
+            <ul class="tips">
+                <li><b>推荐酒店：</b>杭州西湖国宾馆、湖滨银泰酒店</li>
+                <li><b>美食推荐：</b>知味观（定胜糕、猫耳朵）、外婆家（杭帮菜）、葱包烩摊点</li>
+                <li><b>便利设施：</b>湖滨步行街、河坊街均有便利店、药店</li>
+            </ul>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-info-circle icon"></i> 实用信息</h2>
+            <ul class="tips">
+                <li>西湖景区免费，灵隐寺等需购票</li>
+                <li>建议步行+公交结合，避开高峰时段</li>
+                <li>夏季注意防晒补水</li>
+                <li>河坊街、湖滨夜市游客较多，注意保管财物</li>
+            </ul>
+            <div class="budget">预算参考：门票+餐饮+交通约300元/人</div>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-phone icon"></i> 紧急联系电话</h2>
+            <ul class="contacts">
+                <li><b>旅游咨询：</b> 0571-12301</li>
+                <li><b>报警/急救：</b> 110 / 120</li>
+                <li><b>酒店前台：</b> 0571-88888888</li>
+            </ul>
+        </div>
+    </div>
+    <div class="cut-line"></div>
+    <div style="text-align:center;font-size:0.9em;color:#aaa;margin-top:2px;">© 2024 杭州一日游旅行规划表 | 适合A4打印</div>
+</body>
+
+</html>
