@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>艺术签名生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        img {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img id="showImage" src="./ori.jpg" alt="签名图片">
+
+        <input type="text" id="nameInput" placeholder="输入签名内容" value="签名生成器">
+        <select id="fontDropdown">
+            <option value="一笔艺术签">一笔艺术签</option>
+            <option value="连笔商务签">连笔商务签</option>
+            <option value="一笔商务签">一笔商务签</option>
+            <option value="真人手写">真人手写</option>
+            <option value="卡通趣圆字">卡通趣圆字</option>
+            <option value="暴躁字">暴躁字</option>
+        </select>
+        <select id="colorDropdown">
+            <option value="Black">Black</option>
+            <option value="Blue">Blue</option>
+            <option value="Red">Red</option>
+            <option value="Green">Green</option>
+            <option value="Yellow">Yellow</option>
+            <option value="Pink">Pink</option>
+            <option value="DeepSkyBlue">DeepSkyBlue</option>
+            <option value="Cyan">Cyan</option>
+            <option value="Orange">Orange</option>
+            <option value="Seashell">Seashell</option>
+        </select>
+        <button onclick="generateSignature()">生成签名</button>
+        <button onclick="saveSignature()">保存签名</button>
+
+    </div>
+    <script>
+        const font2IdsDict = {
+            "一笔艺术签": ["901", "15"],
+            "连笔商务签": ["904", "15"],
+            "一笔商务签": ["905", "14"],
+            "真人手写": ["343", "14"],
+            "卡通趣圆字": ["397", "14"],
+            "暴躁字": ["380", "14"]
+        };
+
+        const color2IdsDict = {
+            "Black": ["#000000", "#FFFFFF"],
+            "Blue": ["#0000FF", "#FFFFFF"],
+            "Red": ["#FF0000", "#FFFFFF"],
+            "Green": ["#00FF00", "#FFFFFF"],
+            "Yellow": ["#FFFF00", "#FFFFFF"],
+            "Pink": ["#FFC0CB", "#FFFFFF"],
+            "DeepSkyBlue": ["#00BFFF", "#FFFFFF"],
+            "Cyan": ["#00FFFF", "#FFFFFF"],
+            "Orange": ["#FFA500", "#FFFFFF"],
+            "Seashell": ["#FFF5EE", "#FFFFFF"]
+        };
+
+        function generateSignature() {
+            const nameInput = document.getElementById('nameInput').value;
+            const font = document.getElementById('fontDropdown').value;
+            const color = document.getElementById('colorDropdown').value;
+
+            const ids0 = font2IdsDict[font];
+            const ids1 = color2IdsDict[color];
+
+            const url = "/api/jiqie/make.php?file=a&page=14";
+            const formData = new FormData();
+            formData.append("id", nameInput);
+            formData.append("zhenbi", "20191123");
+            formData.append("id1", ids0[0]);
+            formData.append("id2", ids0[1]);
+            formData.append("id3", ids1[0]);
+            formData.append("id5", ids1[1]);
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(responseText => {
+                    const imageUrl = extractImageUrlFromResponse(responseText);
+                    console.info(imageUrl);
+                    if (imageUrl) {
+                        document.getElementById('showImage').src = imageUrl;
+                    } else {
+                        console.error('无法获取图像URL');
+                    }
+                })
+                .catch(error => {
+                    console.error('请求出错:', error);
+                });
+        }
+
+        function extractImageUrlFromResponse(responseText) {
+            const pattern = /src="(.*?)"/;
+            const match = responseText.match(pattern);
+            return match ? match[1] : null;
+        }
+
+        function saveSignature() {
+            const img = document.getElementById('showImage');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // 设置canvas尺寸与图片一致
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+
+            // 在canvas上绘制图片
+            ctx.drawImage(img, 0, 0);
+
+            // 将canvas转换为base64格式
+            const dataURL = canvas.toDataURL('image/png');
+
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.download = document.getElementById('nameInput').value + '.png';
+            link.href = dataURL;
+
+            // 触发下载
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+
+</html

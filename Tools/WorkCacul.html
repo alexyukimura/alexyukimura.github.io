@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作价值计算器</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --secondary: #2196F3;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --success: #4CAF50;
+            --gray: #757575;
+            --light-gray: #f5f5f5;
+            --border-radius: 8px;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--gray);
+            font-size: 1.1em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%23555'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 40px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+        }
+
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            background: var(--light-gray);
+            text-align: center;
+            display: none;
+        }
+
+        .result-container.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-value {
+            font-size: 2em;
+            color: var(--primary);
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .result-text {
+            font-size: 1.2em;
+            color: var(--gray);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            color: var(--gray);
+            cursor: help;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px;
+            background: #333;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.9em;
+            white-space: nowrap;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>工作核心计算器</h1>
+            <p>快速评估你的工作价值</p>
+        </div>
+
+        <form id="workForm" class="form-grid">
+            <div class="form-group">
+                <label for="dailySalary">平均日薪酬 (元/日)
+                    <span class="tooltip" data-tooltip="月薪除以22.5">ℹ️</span>
+                </label>
+                <input type="number" id="dailySalary" name="dailySalary" required placeholder="请输入日薪">
+            </div>
+
+            <div class="form-group">
+                <label for="dailyWorkTime">工作时长 (小时)
+                    <span class="tooltip" data-tooltip="下班时间减去上班时间">ℹ️</span>
+                </label>
+                <input type="number" id="dailyWorkTime" name="dailyWorkTime" required placeholder="例：8">
+            </div>
+
+            <div class="form-group">
+                <label for="commuteDuration">通勤时长 (小时)</label>
+                <input type="number" id="commuteDuration" name="commuteDuration" required placeholder="单程通勤时间">
+            </div>
+
+            <div class="form-group">
+                <label for="freeDuration">摸鱼时长 (小时)
+                    <span class="tooltip" data-tooltip="包括不干活+吃饭+午休时间">ℹ️</span>
+                </label>
+                <input type="number" id="freeDuration" name="freeDuration" required placeholder="请如实填写">
+            </div>
+
+            <div class="form-group">
+                <label for="education">教育背景</label>
+                <select id="education" name="education">
+                    <option value="8">专科及以下</option>
+                    <option value="10">普通本科</option>
+                    <option value="12">高级本科</option>
+                    <option value="14">普通硕士</option>
+                    <option value="16">高级硕士</option>
+                    <option value="18">普通博士</option>
+                    <option value="20">高级博士</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="env">工作环境</label>
+                <select id="env" name="env">
+                    <option value="8">封闭研发_没有外网</option>
+                    <option value="9">办公大楼_没有商业</option>
+                    <option value="10">正常街道_有饭馆有超市</option>
+                    <option value="11">繁华商业街</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="female">女性同事数量</label>
+                <select id="female" name="female">
+                    <option value="9">没有</option>
+                    <option value="10">不多不少</option>
+                    <option value="11">很多</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="mate">同事质量</label>
+                <select id="mate" name="mate">
+                    <option value="95">SB很多</option>
+                    <option value="100">普通很多</option>
+                    <option value="105">优秀很多</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="career">职业类型</label>
+                <select id="career" name="career">
+                    <option value="100">游戏策划_运营_测试</option>
+                    <option value="105">游戏美术</option>
+                    <option value="110">游戏程序</option>
+                    <option value="115">干活的领导</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="workStartEight">是否8点上班</label>
+                <select id="workStartEight" name="workStartEight">
+                    <option value="95">是</option>
+                    <option value="100">否</option>
+                </select>
+            </div>
+        </form>
+
+        <div id="resultContainer" class="result-container">
+            <div class="result-value" id="resultValue"></div>
+            <div class="result-text" id="resultText"></div>
+        </div>
+        <div class="button-container">
+            <button onclick="btnCalculateWorkValue()">开始计算 </button> 
+        </div>
+    </div>
+
+    <script>
+        function btnCalculateWorkValue() { 
+            const dailySalary = parseFloat(document.getElementById('dailySalary').value);
+            const dailyWorkTime = parseFloat(document.getElementById('dailyWorkTime').value);
+            const commuteDuration = parseFloat(document.getElementById('commuteDuration').value);
+            const freeDuration = parseFloat(document.getElementById('freeDuration').value);
+            const education = parseFloat(document.getElementById('education').value);
+            const env = parseFloat(document.getElementById('env').value);
+            const female = parseFloat(document.getElementById('female').value);
+            const mate = parseFloat(document.getElementById('mate').value);
+            const career = parseFloat(document.getElementById('career').value);
+            const workStartEight = parseFloat(document.getElementById('workStartEight').value);
+
+            // 验证输入
+            if (!dailySalary || !dailyWorkTime || !commuteDuration || !freeDuration) {
+                alert('请填写所有必填项！');
+                return;
+            }
+
+            const sumWeightValue = calculateSumWeight(env, female, mate);
+            const workValue = calculateWorkValue(dailySalary, dailyWorkTime, commuteDuration, freeDuration, education, career, workStartEight, sumWeightValue);
+            const result = checkResult(workValue);
+
+            // 显示结果
+            const resultContainer = document.getElementById('resultContainer');
+            const resultValue = document.getElementById('resultValue');
+            const resultText = document.getElementById('resultText');
+
+            resultValue.textContent = `工作价值指数：${workValue.toFixed(2)}`;
+            resultText.textContent = result;
+
+            resultContainer.classList.remove('show');
+            void resultContainer.offsetWidth; // 触发重排
+            resultContainer.classList.add('show');
+        }
+
+        function calculateSumWeight(env, female, mate) {
+            const mult = env * female * mate * 1.0;
+            return mult / (10.0 * 10.0 * 100.0);
+        }
+
+        function calculateWorkValue(dailySalary, dailyWorkTime, commuteDuration, freeDuration, education, career, workStartEight, sumWeight) {
+            const sum = dailySalary * sumWeight;
+            const divisor = 35 * (dailyWorkTime + commuteDuration - 0.5 * freeDuration) * education * career / (10 * 100.0);
+            return sum * workStartEight / (divisor * 100.0);
+        }
+
+        function checkResult(val) {
+            if (val < 2) {
+                return "😢 低于2很惨，建议考虑换工作";
+            }
+            if (val >= 3 && val < 4) {
+                return "😊 高于3很爽，继续保持";
+            }
+            if (val > 4) {
+                return "🎉 高于4爽到爆，请珍惜当前工作";
+            }
+            return "😢 低于2很惨，建议考虑换工作";
+        }
+    </script>
+</body>
+
+</html
