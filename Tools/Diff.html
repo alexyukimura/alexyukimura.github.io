@@ -2,8 +2,12 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>眼力挑战：99%的人找不到不同汉字！你能几秒找到吗？</title>
     <style>
+        html {
+            font-size: 16px;
+        }
         body {
             font-family: "微软雅黑", Arial, sans-serif;
             background: #f2f6f9;
@@ -12,87 +16,96 @@
             padding: 0;
         }
         #main-title {
-            margin-top: 40px;
+            margin-top: 2.5rem;
             color: #e94f4a;
-            font-size: 2.8em;
+            font-size: 2.2rem;
             font-weight: bold;
             letter-spacing: 2px;
             text-shadow: 1px 1px 8px #fff;
+            padding: 0 1rem;
+            word-break: break-all;
         }
         #timer {
-            margin-top: 18px;
-            font-size: 2em;
+            margin-top: 1.2rem;
+            font-size: 1.3rem;
             color: #357abd;
             font-weight: bold;
             letter-spacing: 1px;
         }
         #pair-tip {
-            margin: 18px auto 0 auto;
-            font-size: 1.5em;
+            margin: 1.2rem auto 0 auto;
+            font-size: 1.1rem;
             color: #2d3a4b;
             background: #fffbe6;
-            border-radius: 8px;
+            border-radius: 0.5rem;
             display: inline-block;
-            padding: 8px 24px;
+            padding: 0.5rem 1.2rem;
             box-shadow: 0 2px 8px #e0e0e0;
         }
         #game-board {
             display: inline-block;
-            margin: 40px auto 0 auto;
-            border: 3px solid #4a90e2;
+            margin: 2rem auto 0 auto;
+            border: 2px solid #4a90e2;
             background: #e3eaf2;
-            border-radius: 16px;
+            border-radius: 1rem;
             box-shadow: 0 2px 16px #b0c4de;
-            padding: 24px 24px 16px 24px;
+            padding: 1.2rem 0.5rem 0.8rem 0.5rem;
+            max-width: 98vw;
         }
         .row {
             display: flex;
+            justify-content: center;
         }
         .cell {
-            width: 70px;
-            height: 70px;
+            width: 2.8rem;
+            height: 2.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.8em;
-            border: 2px solid #b0c4de;
+            font-size: 2rem;
+            border: 1.5px solid #b0c4de;
             cursor: pointer;
             background: #fff;
             color: #2d3a4b;
-            margin: 4px;
-            border-radius: 10px;
+            margin: 0.18rem;
+            border-radius: 0.5rem;
             transition: background 0.2s, color 0.2s, box-shadow 0.2s;
             box-shadow: 0 1px 4px #d0d0d0;
             user-select: none;
         }
-        .cell:hover {
+        .cell:hover, .cell:active {
             background: #d0e6fa;
             color: #e94f4a;
             box-shadow: 0 2px 8px #b0c4de;
         }
         #result {
-            margin-top: 32px;
-            font-size: 2em;
+            margin-top: 2rem;
+            font-size: 1.3rem;
             color: #e94f4a;
             font-weight: bold;
             min-height: 2.5em;
         }
-        #restart {
-            margin-top: 32px;
-            padding: 16px 40px;
-            font-size: 1.6em;
+        #restart, #record-btn {
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.8rem 2.2rem;
+            font-size: 1.1rem;
             background: #4a90e2;
             color: #fff;
             border: none;
-            border-radius: 10px;
+            border-radius: 0.6rem;
             cursor: pointer;
             box-shadow: 0 2px 8px #b0c4de;
             font-weight: bold;
             letter-spacing: 2px;
             transition: background 0.2s;
+            display: inline-block;
         }
-        #restart:hover {
+        #restart:hover, #record-btn:hover, #restart:active, #record-btn:active {
             background: #357abd;
+        }
+        #record-btn {
+            margin-left: 0.8rem;
         }
         /* 弹窗动画 */
         #popup {
@@ -103,17 +116,29 @@
             transform: translate(-50%, -50%);
             background: #fffbe6;
             color: #e94f4a;
-            font-size: 2.2em;
+            font-size: 1.5rem;
             font-weight: bold;
-            border-radius: 16px;
+            border-radius: 1rem;
             box-shadow: 0 4px 32px #b0c4de;
-            padding: 40px 60px;
+            padding: 1.5rem 2.2rem;
             z-index: 9999;
             animation: popupShow 0.5s;
+            max-width: 90vw;
+            word-break: break-all;
         }
         @keyframes popupShow {
             0% { opacity: 0; transform: scale(0.7) translate(-50%, -50%);}
             100% { opacity: 1; transform: scale(1) translate(-50%, -50%);}
+        }
+        @media (max-width: 600px) {
+            html { font-size: 14px; }
+            #main-title { font-size: 1.3rem; }
+            #timer { font-size: 1rem; }
+            #pair-tip { font-size: 0.95rem; }
+            #game-board { padding: 0.5rem 0.1rem 0.5rem 0.1rem; }
+            .cell { width: 2.1rem; height: 2.1rem; font-size: 1.3rem; }
+            #restart, #record-btn { font-size: 0.95rem; padding: 0.6rem 1.2rem; }
+            #popup { font-size: 1.1rem; padding: 1rem 1.2rem; }
         }
     </style>
 </head>
@@ -123,7 +148,7 @@
     <div id="pair-tip"></div>
     <div id="game-board"></div>
     <div id="result"></div>
-    <button id="restart" onclick="startGame()">重新开始</button>
+    <button id="restart" onclick="startGame()">重新开始</button> 
     <div id="popup"></div>
     <script src="charPairs.js"></script>
     <script>
@@ -133,6 +158,12 @@
         let timerInterval = null;
         let startTime = null;
         let timerStopped = false;
+
+        // 录制相关变量
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let stream = null;
 
         function getRandomInt(max) {
             return Math.floor(Math.random() * max);
@@ -175,7 +206,7 @@
             diffChar = pair[1];
 
             // 显示本局汉字对
-            document.getElementById('pair-tip').textContent = `本局汉字对：${normalChar} / ${diffChar}`;
+            //document.getElementById('pair-tip').textContent = `本局汉字对：${normalChar} / ${diffChar}`;
 
             // 随机生成不同字的位置
             const diffRow = getRandomInt(gridSize);
@@ -203,6 +234,56 @@
                     rowDiv.appendChild(cell);
                 }
                 board.appendChild(rowDiv);
+            }
+        }
+
+        // 录制功能
+        async function toggleRecording() {
+            const btn = document.getElementById('record-btn');
+            if (!isRecording) {
+                // 开始录制
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                    alert('当前浏览器不支持屏幕录制');
+                    return;
+                }
+                try {
+                    stream = await navigator.mediaDevices.getDisplayMedia({
+                        video: { mediaSource: "screen" },
+                        audio: false
+                    });
+                    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+                    recordedChunks = [];
+                    mediaRecorder.ondataavailable = function(e) {
+                        if (e.data.size > 0) recordedChunks.push(e.data);
+                    };
+                    mediaRecorder.onstop = function() {
+                        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = 'find-diff-hanzi.webm';
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(() => {
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(url);
+                        }, 100);
+                    };
+                    mediaRecorder.start();
+                    isRecording = true;
+                    btn.textContent = '停止录制并下载';
+                    showPopup('正在录制屏幕...');
+                } catch (err) {
+                    alert('录制失败：' + err);
+                }
+            } else {
+                // 停止录制
+                mediaRecorder.stop();
+                stream.getTracks().forEach(track => track.stop());
+                isRecording = false;
+                btn.textContent = '开始录制视频';
+                showPopup('录制已结束，正在下载...');
             }
         }
 
