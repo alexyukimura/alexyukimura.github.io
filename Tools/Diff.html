@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>眼力挑战：99%的人找不到不同汉字！你能几秒找到吗？</title>
+    <style>
+        body {
+            font-family: "微软雅黑", Arial, sans-serif;
+            background: #f2f6f9;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #main-title {
+            margin-top: 40px;
+            color: #e94f4a;
+            font-size: 2.8em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 8px #fff;
+        }
+        #timer {
+            margin-top: 18px;
+            font-size: 2em;
+            color: #357abd;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        #pair-tip {
+            margin: 18px auto 0 auto;
+            font-size: 1.5em;
+            color: #2d3a4b;
+            background: #fffbe6;
+            border-radius: 8px;
+            display: inline-block;
+            padding: 8px 24px;
+            box-shadow: 0 2px 8px #e0e0e0;
+        }
+        #game-board {
+            display: inline-block;
+            margin: 40px auto 0 auto;
+            border: 3px solid #4a90e2;
+            background: #e3eaf2;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px #b0c4de;
+            padding: 24px 24px 16px 24px;
+        }
+        .row {
+            display: flex;
+        }
+        .cell {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8em;
+            border: 2px solid #b0c4de;
+            cursor: pointer;
+            background: #fff;
+            color: #2d3a4b;
+            margin: 4px;
+            border-radius: 10px;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 4px #d0d0d0;
+            user-select: none;
+        }
+        .cell:hover {
+            background: #d0e6fa;
+            color: #e94f4a;
+            box-shadow: 0 2px 8px #b0c4de;
+        }
+        #result {
+            margin-top: 32px;
+            font-size: 2em;
+            color: #e94f4a;
+            font-weight: bold;
+            min-height: 2.5em;
+        }
+        #restart {
+            margin-top: 32px;
+            padding: 16px 40px;
+            font-size: 1.6em;
+            background: #4a90e2;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #b0c4de;
+            font-weight: bold;
+            letter-spacing: 2px;
+            transition: background 0.2s;
+        }
+        #restart:hover {
+            background: #357abd;
+        }
+        /* 弹窗动画 */
+        #popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 40%;
+            transform: translate(-50%, -50%);
+            background: #fffbe6;
+            color: #e94f4a;
+            font-size: 2.2em;
+            font-weight: bold;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px #b0c4de;
+            padding: 40px 60px;
+            z-index: 9999;
+            animation: popupShow 0.5s;
+        }
+        @keyframes popupShow {
+            0% { opacity: 0; transform: scale(0.7) translate(-50%, -50%);}
+            100% { opacity: 1; transform: scale(1) translate(-50%, -50%);}
+        }
+    </style>
+</head>
+<body>
+    <h1 id="main-title">眼力挑战：99%的人找不到不同汉字！你能几秒找到吗？</h1>
+    <div id="timer">用时：0.00 秒</div>
+    <div id="pair-tip"></div>
+    <div id="game-board"></div>
+    <div id="result"></div>
+    <button id="restart" onclick="startGame()">重新开始</button>
+    <div id="popup"></div>
+    <script src="charPairs.js"></script>
+    <script>
+        const gridSize = 6; // 6x6，适合中老年人
+        let normalChar = "目";
+        let diffChar = "日";
+        let timerInterval = null;
+        let startTime = null;
+        let timerStopped = false;
+
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        function startTimer() {
+            startTime = Date.now();
+            timerStopped = false;
+            document.getElementById('timer').textContent = '用时：0.00 秒';
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (timerStopped) return;
+                const elapsed = (Date.now() - startTime) / 1000;
+                document.getElementById('timer').textContent = `用时：${elapsed.toFixed(2)} 秒`;
+            }, 50);
+        }
+
+        function stopTimer() {
+            timerStopped = true;
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        function showPopup(msg) {
+            const popup = document.getElementById('popup');
+            popup.textContent = msg;
+            popup.style.display = 'block';
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 1800);
+        }
+
+        function startGame() {
+            document.getElementById('result').textContent = '';
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+
+            // 随机选择一组汉字
+            const pair = window.charPairs[getRandomInt(window.charPairs.length)];
+            normalChar = pair[0];
+            diffChar = pair[1];
+
+            // 显示本局汉字对
+            document.getElementById('pair-tip').textContent = `本局汉字对：${normalChar} / ${diffChar}`;
+
+            // 随机生成不同字的位置
+            const diffRow = getRandomInt(gridSize);
+            const diffCol = getRandomInt(gridSize);
+
+            startTimer();
+
+            for (let i = 0; i < gridSize; i++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row';
+                for (let j = 0; j < gridSize; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.textContent = (i === diffRow && j === diffCol) ? diffChar : normalChar;
+                    cell.onclick = function() {
+                        if (timerStopped) return;
+                        if (i === diffRow && j === diffCol) {
+                            document.getElementById('result').textContent = '恭喜你，找到了不同的汉字！欢迎在评论区晒出你的用时！';
+                            stopTimer();
+                            showPopup('厉害！你找到了！');
+                        } else {
+                            document.getElementById('result').textContent = '再试试吧！';
+                        }
+                    };
+                    rowDiv.appendChild(cell);
+                }
+                board.appendChild(rowDiv);
+            }
+        }
+
+        // 页面加载时自动开始
+        window.onload = startGame;
+    </script>
+</body>
+</html>
