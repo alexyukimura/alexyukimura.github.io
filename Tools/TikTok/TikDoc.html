@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深夜鸡汤文案库</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f6f6f6;
+            color: #222;
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 100%;
+            padding: 18px 12px 32px 12px;
+            flex: 1 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 28px 0 18px 0;
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            color: #222;
+            margin-bottom: 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .header h1 {
+            font-size: 2.1rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .soup-list {
+            margin-top: 10px;
+        }
+        .soup-item {
+            background: #fff;
+            margin-bottom: 14px;
+            padding: 16px 14px 16px 14px;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: flex-start;
+            animation: fadeIn 0.5s;
+        }
+        .soup-item .rank {
+            display: inline-block;
+            background: #ffb6b9;
+            color: #fff;
+            width: 26px;
+            height: 26px;
+            text-align: center;
+            line-height: 26px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .soup-item .text {
+            flex: 1;
+            font-size: 1rem;
+        }
+        .btn-area {
+            width: 100%;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            background: #f6f6f6;
+            padding: 18px 0 18px 0;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+        }
+        .random-btn {
+            background: linear-gradient(90deg, #ffb6b9 0%, #a8edea 100%);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 12px 32px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: background 0.2s;
+        }
+        .random-btn:active {
+            background: linear-gradient(90deg, #a8edea 0%, #ffb6b9 100%);
+        }
+        @media (max-width: 768px) {
+            .container { padding: 8px 2vw 18px 2vw; }
+            .header h1 { font-size: 1.3rem; }
+            .soup-item { padding: 12px 8px 12px 8px; }
+            .random-btn { padding: 10px 18px; font-size: 1rem; }
+            .btn-area { padding: 12px 0 12px 0; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>深夜鸡汤文案库</h1>
+            <p style="font-size:0.98rem; color:#555; margin-top:8px;">点击按钮，随机获取温暖文案</p>
+        </div>
+        <div class="soup-list" id="soupList"></div>
+    </div>
+    <div class="btn-area">
+        <button class="random-btn" onclick="showRandomSoup()">随机生成鸡汤文案</button>
+    </div>
+    <script src="soupData.js"></script>
+    <script>
+        function showRandomSoup() {
+            if (!window.soupArr || !Array.isArray(window.soupArr)) return;
+            const soupList = document.getElementById('soupList');
+            soupList.innerHTML = '';
+            // 随机生成5~10条不重复的文案
+            const count = Math.floor(Math.random() * 6) + 5; // 5~10
+            const idxArr = [];
+            while(idxArr.length < count) {
+                let idx = Math.floor(Math.random() * soupArr.length);
+                if(!idxArr.includes(idx)) idxArr.push(idx);
+            }
+            // 顺序标注序号，从1开始
+            idxArr.forEach((idx, i) => {
+                const item = document.createElement('div');
+                item.className = 'soup-item';
+                item.innerHTML = `<span class=\"rank\">${i+1}</span><div class=\"text\">${soupArr[idx]}</div>`;
+                soupList.appendChild(item);
+            });
+        }
+        // 页面加载时自动展示一组
+        window.onload = showRandomSoup;
+    </script>
+</body>
+</html>
