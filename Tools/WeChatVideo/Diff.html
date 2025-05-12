@@ -129,6 +129,83 @@
             #restart, #record-btn { font-size: 1.3rem; padding: 1rem 2rem; }
             #popup { font-size: 1.5rem; padding: 1.5rem 2rem; }
         }
+        /* 新增样式 */
+        .share-buttons {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .share-btn {
+            padding: 0.6rem 1.2rem;
+            font-size: 1rem;
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 0.4rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .achievement {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #fff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .leaderboard {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .leaderboard h3 {
+            color: #4a90e2;
+            margin-bottom: 1rem;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comment-section {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .comment-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 0.4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .submit-comment {
+            padding: 0.6rem 1.2rem;
+            background: #4a90e2;
+            color: #fff;
+            border: none;
+            border-radius: 0.4rem;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -138,6 +215,31 @@
     <div id="result"></div>
     <button id="restart" onclick="startGame()">重新开始</button> 
     <div id="popup"></div>
+    <div class="share-buttons">
+        <button class="share-btn" onclick="shareToWeChat()">
+            <span>分享到微信</span>
+        </button>
+        <button class="share-btn" onclick="shareToWeibo()">
+            <span>分享到微博</span>
+        </button>
+    </div>
+    
+    <div class="achievement" id="achievement">
+        <h3>🏆 获得成就！</h3>
+        <p id="achievement-text"></p>
+    </div>
+    
+    <div class="leaderboard" id="leaderboard">
+        <h3>🏆 排行榜</h3>
+        <div id="leaderboard-content"></div>
+    </div>
+    
+    <div class="comment-section">
+        <h3>💬 评论区</h3>
+        <textarea class="comment-input" id="comment-input" placeholder="分享你的游戏体验..."></textarea>
+        <button class="submit-comment" onclick="submitComment()">发表评论</button>
+        <div id="comments-list"></div>
+    </div>
     <script src="charPairs.js"></script>
     <script>
         const gridSize = 6; // 6x6，适合中老年人
@@ -152,6 +254,9 @@
         let recordedChunks = [];
         let isRecording = false;
         let stream = null;
+
+        let bestTime = localStorage.getItem('bestTime') || Infinity;
+        let achievementUnlocked = false;
 
         function getRandomInt(max) {
             return Math.floor(Math.random() * max);
@@ -209,9 +314,7 @@
                     cell.onclick = function() {
                         if (timerStopped) return;
                         if (i === diffRow && j === diffCol) {
-                            document.getElementById('result').textContent = '恭喜你，找到了不同的汉字！欢迎在评论区晒出你的用时！';
-                            stopTimer();
-                            showPopup('厉害！你找到了！');
+                            handleGameWin();
                         } else {
                             document.getElementById('result').textContent = '再试试吧！';
                         }
@@ -272,8 +375,109 @@
             }
         }
 
+        function showAchievement(text) {
+            const achievement = document.getElementById('achievement');
+            document.getElementById('achievement-text').textContent = text;
+            achievement.style.display = 'block';
+            setTimeout(() => {
+                achievement.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateLeaderboard(time) {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+            leaderboard.push({
+                time: time,
+                date: new Date().toLocaleDateString()
+            });
+            leaderboard.sort((a, b) => a.time - b.time);
+            leaderboard.splice(10); // 只保留前10名
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+            
+            // 显示排行榜
+            const leaderboardContent = document.getElementById('leaderboard-content');
+            leaderboardContent.innerHTML = leaderboard.map((entry, index) => `
+                <div class="leaderboard-item">
+                    <span>第${index + 1}名</span>
+                    <span>${entry.time.toFixed(2)}秒</span>
+                    <span>${entry.date}</span>
+                </div>
+            `).join('');
+            document.getElementById('leaderboard').style.display = 'block';
+        }
+
+        function submitComment() {
+            const comment = document.getElementById('comment-input').value;
+            if (!comment.trim()) return;
+            
+            const comments = JSON.parse(localStorage.getItem('comments') || '[]');
+            comments.push({
+                text: comment,
+                time: new Date().toLocaleString()
+            });
+            localStorage.setItem('comments', JSON.stringify(comments));
+            
+            // 显示评论
+            const commentsList = document.getElementById('comments-list');
+            commentsList.innerHTML = comments.map(c => `
+                <div class="comment-item">
+                    <p>${c.text}</p>
+                    <small>${c.time}</small>
+                </div>
+            `).join('');
+            
+            document.getElementById('comment-input').value = '';
+        }
+
+        function shareToWeChat() {
+            showPopup('请点击右上角"..."按钮，选择"分享到朋友圈"或"发送给朋友"');
+        }
+
+        function shareToWeibo() {
+            const text = `我在眼力挑战游戏中用时${(Date.now() - startTime) / 1000}秒找到不同汉字！快来挑战吧！`;
+            window.open(`http://service.weibo.com/share/share.php?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(text)}`);
+        }
+
+        function handleGameWin() {
+            const currentTime = (Date.now() - startTime) / 1000;
+            stopTimer();
+            
+            // 更新最佳成绩
+            if (currentTime < bestTime) {
+                bestTime = currentTime;
+                localStorage.setItem('bestTime', bestTime);
+                showAchievement('🎉 新纪录！你是最快的！');
+            }
+            
+            // 根据用时给予不同评价
+            let message = '';
+            if (currentTime < 5) {
+                message = '太厉害了！你是火眼金睛！';
+                showAchievement('👑 获得"火眼金睛"成就！');
+            } else if (currentTime < 10) {
+                message = '不错！你的眼力很好！';
+                showAchievement('🌟 获得"眼力达人"成就！');
+            } else {
+                message = '继续加油！';
+            }
+            
+            document.getElementById('result').textContent = `${message} 用时：${currentTime.toFixed(2)}秒`;
+            updateLeaderboard(currentTime);
+            showPopup('恭喜你，找到了不同的汉字！');
+        }
+
         // 页面加载时自动开始
-        window.onload = startGame;
+        window.onload = function() {
+            startGame();
+            const comments = JSON.parse(localStorage.getItem('comments') || '[]');
+            const commentsList = document.getElementById('comments-list');
+            commentsList.innerHTML = comments.map(c => `
+                <div class="comment-item">
+                    <p>${c.text}</p>
+                    <small>${c.time}</small>
+                </div>
+            `).join('');
+        };
     </script>
 </body>
 </html>

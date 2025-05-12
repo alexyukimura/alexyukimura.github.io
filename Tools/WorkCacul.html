@@ -112,6 +112,48 @@
         .button-container {
             text-align: center;
             margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .share-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-btn.wechat {
+            background: #07C160;
+        }
+
+        .share-btn.weibo {
+            background: #E6162D;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .share-btn:active {
+            transform: translateY(0);
         }
 
         button {
@@ -310,6 +352,14 @@
         <div id="resultContainer" class="result-container">
             <div class="result-value" id="resultValue"></div>
             <div class="result-text" id="resultText"></div>
+            <div class="share-buttons">
+                <button class="share-btn wechat" onclick="shareToWeChat()">
+                    <span>📱</span> 分享到微信
+                </button>
+                <button class="share-btn weibo" onclick="shareToWeibo()">
+                    <span>🌐</span> 分享到微博
+                </button>
+            </div>
         </div>
         <div class="button-container">
             <button onclick="btnCalculateWorkValue()">开始计算 </button> 
@@ -364,16 +414,44 @@
         }
 
         function checkResult(val) {
+            let result = "";
             if (val < 2) {
-                return "😢 低于2很惨，建议考虑换工作";
+                result = "😢 低于2很惨，建议考虑换工作";
+            } else if (val >= 3 && val < 4) {
+                result = "😊 高于3很爽，继续保持";
+            } else if (val > 4) {
+                result = "🎉 高于4爽到爆，请珍惜当前工作";
+            } else {
+                result = "😢 低于2很惨，建议考虑换工作";
             }
-            if (val >= 3 && val < 4) {
-                return "😊 高于3很爽，继续保持";
-            }
-            if (val > 4) {
-                return "🎉 高于4爽到爆，请珍惜当前工作";
-            }
-            return "😢 低于2很惨，建议考虑换工作";
+            return result;
+        }
+
+        function shareToWeChat() {
+            const resultValue = document.getElementById('resultValue').textContent;
+            const resultText = document.getElementById('resultText').textContent;
+            const pageUrl = window.location.href;
+            const shareText = `我的工作价值指数：${resultValue}\n${resultText}\n\n快来测测你的工作价值吧！\n\n🔗 点击链接测试：${pageUrl}`;
+            
+            // 创建临时输入框
+            const tempInput = document.createElement('textarea');
+            tempInput.value = shareText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            
+            alert('分享文本已复制，请打开微信粘贴分享！');
+        }
+
+        function shareToWeibo() {
+            const resultValue = document.getElementById('resultValue').textContent;
+            const resultText = document.getElementById('resultText').textContent;
+            const shareText = `我的工作价值指数：${resultValue}\n${resultText}\n\n快来测测你的工作价值吧！`;
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(shareText);
+            
+            window.open(`http://service.weibo.com/share/share.php?url=${url}&title=${title}`);
         }
     </script>
 </body>
