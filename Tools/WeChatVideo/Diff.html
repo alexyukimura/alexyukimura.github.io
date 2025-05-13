@@ -25,12 +25,57 @@
             padding: 0 1rem;
             word-break: break-all;
         }
-        #timer {
+        #timer-tip-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-top: 1.2rem;
+            margin-bottom: 0.5rem;
+            gap: 1.2rem;
+        }
+        #timer {
             font-size: 1.3rem;
             color: #357abd;
             font-weight: bold;
             letter-spacing: 1px;
+            display: inline-block;
+            vertical-align: middle;
+            background: #fff;
+            border-radius: 0.7rem;
+            padding: 0.4rem 1.2rem;
+            box-shadow: 0 2px 8px #b0c4de;
+        }
+        #find-tip {
+            display: inline-block;
+            font-size: 1.25rem;
+            color: #fff;
+            background: linear-gradient(90deg, #ffb300 60%, #ff5252 100%);
+            font-weight: bold;
+            border-radius: 1.2rem;
+            padding: 0.5rem 1.6rem;
+            box-shadow: 0 4px 16px #ffd60099;
+            letter-spacing: 2px;
+            vertical-align: middle;
+            text-shadow: 1px 1px 8px #ffecb3, 0 2px 8px #e94f4a;
+            border: 2.5px solid #fffbe6;
+            margin: 0;
+        }
+        .shake-x {
+            display: inline-block;
+            animation: shakeX 1s infinite linear;
+        }
+        @keyframes shakeX {
+            0% { transform: translateX(0); }
+            10% { transform: translateX(-6px); }
+            20% { transform: translateX(6px); }
+            30% { transform: translateX(-5px); }
+            40% { transform: translateX(5px); }
+            50% { transform: translateX(-4px); }
+            60% { transform: translateX(4px); }
+            70% { transform: translateX(-2px); }
+            80% { transform: translateX(2px); }
+            90% { transform: translateX(-1px); }
+            100% { transform: translateX(0); }
         }
         #game-board {
             display: inline-block;
@@ -68,15 +113,14 @@
             color: #e94f4a;
             box-shadow: 0 2px 8px #b0c4de;
         }
-        #result {
-            margin-top: 2rem;
-            font-size: 1.3rem;
-            color: #e94f4a;
-            font-weight: bold;
-            min-height: 2.5em;
+        .center-btn {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         #restart, #record-btn {
-            margin-top: 1.5rem;
+            margin-top: 1.2rem;
             margin-bottom: 0.5rem;
             padding: 0.8rem 2.2rem;
             font-size: 1.1rem;
@@ -123,7 +167,19 @@
         @media (max-width: 600px) {
             html { font-size: 18px; }
             #main-title { font-size: 1.8rem; }
-            #timer { font-size: 1.4rem; }
+            #timer-tip-wrap {
+                flex-direction: column;
+                gap: 0.7rem;
+            }
+            #timer {
+                font-size: 1.1rem;
+                padding: 0.35rem 1.1rem;
+            }
+            #find-tip {
+                font-size: 1.05rem;
+                padding: 0.35rem 1.1rem;
+                border-radius: 0.8rem;
+            }
             #game-board { padding: 1rem 0.3rem 1rem 0.3rem; }
             .cell { width: 3rem; height: 3rem; font-size: 1.8rem; }
             #restart, #record-btn { font-size: 1.3rem; padding: 1rem 2rem; }
@@ -210,10 +266,14 @@
 </head>
 <body>
     <h1 id="main-title">眼力挑战：99%的人找不到不同汉字！你能几秒找到吗？</h1>
-    <div id="timer">用时：0.00 秒</div>
+    <div id="timer-tip-wrap">
+        <div id="timer">用时：0.00 秒</div>
+        <span id="find-tip">找出图中"钱"</span>
+    </div>
     <div id="game-board"></div>
-    <div id="result"></div>
-    <button id="restart" onclick="startGame()">重新开始</button> 
+    <div class="center-btn">
+        <button id="restart" onclick="startGame()">重新开始</button>
+    </div>
     <div id="popup"></div>
     <div class="share-buttons">
         <button class="share-btn" onclick="shareToWeChat()">
@@ -232,13 +292,6 @@
     <div class="leaderboard" id="leaderboard">
         <h3>🏆 排行榜</h3>
         <div id="leaderboard-content"></div>
-    </div>
-    
-    <div class="comment-section">
-        <h3>💬 评论区</h3>
-        <textarea class="comment-input" id="comment-input" placeholder="分享你的游戏体验..."></textarea>
-        <button class="submit-comment" onclick="submitComment()">发表评论</button>
-        <div id="comments-list"></div>
     </div>
     <script src="charPairs.js"></script>
     <script>
@@ -289,14 +342,18 @@
         }
 
         function startGame() {
-            document.getElementById('result').textContent = '';
-            const board = document.getElementById('game-board');
-            board.innerHTML = '';
+            document.getElementById('game-board').innerHTML = '';
 
             // 随机选择一组汉字
             const pair = window.charPairs[getRandomInt(window.charPairs.length)];
             normalChar = pair[0];
             diffChar = pair[1];
+
+            // 动态更新提示内容
+            const findTip = document.getElementById('find-tip');
+            if (findTip) {
+                findTip.innerHTML = `找出图中"${diffChar}"`;
+            }
 
             // 随机生成不同字的位置
             const diffRow = getRandomInt(gridSize);
@@ -315,13 +372,11 @@
                         if (timerStopped) return;
                         if (i === diffRow && j === diffCol) {
                             handleGameWin();
-                        } else {
-                            document.getElementById('result').textContent = '再试试吧！';
                         }
                     };
                     rowDiv.appendChild(cell);
                 }
-                board.appendChild(rowDiv);
+                document.getElementById('game-board').appendChild(rowDiv);
             }
         }
 
@@ -406,29 +461,6 @@
             document.getElementById('leaderboard').style.display = 'block';
         }
 
-        function submitComment() {
-            const comment = document.getElementById('comment-input').value;
-            if (!comment.trim()) return;
-            
-            const comments = JSON.parse(localStorage.getItem('comments') || '[]');
-            comments.push({
-                text: comment,
-                time: new Date().toLocaleString()
-            });
-            localStorage.setItem('comments', JSON.stringify(comments));
-            
-            // 显示评论
-            const commentsList = document.getElementById('comments-list');
-            commentsList.innerHTML = comments.map(c => `
-                <div class="comment-item">
-                    <p>${c.text}</p>
-                    <small>${c.time}</small>
-                </div>
-            `).join('');
-            
-            document.getElementById('comment-input').value = '';
-        }
-
         function shareToWeChat() {
             showPopup('请点击右上角"..."按钮，选择"分享到朋友圈"或"发送给朋友"');
         }
@@ -461,7 +493,6 @@
                 message = '继续加油！';
             }
             
-            document.getElementById('result').textContent = `${message} 用时：${currentTime.toFixed(2)}秒`;
             updateLeaderboard(currentTime);
             showPopup('恭喜你，找到了不同的汉字！');
         }
@@ -469,14 +500,6 @@
         // 页面加载时自动开始
         window.onload = function() {
             startGame();
-            const comments = JSON.parse(localStorage.getItem('comments') || '[]');
-            const commentsList = document.getElementById('comments-list');
-            commentsList.innerHTML = comments.map(c => `
-                <div class="comment-item">
-                    <p>${c.text}</p>
-                    <small>${c.time}</small>
-                </div>
-            `).join('');
         };
     </script>
 </body>
