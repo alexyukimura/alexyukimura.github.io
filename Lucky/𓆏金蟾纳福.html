@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>𓆏金蟾纳福</title>
+    <style>
+        body {
+            background-color: #2a1e1a;
+            color: #e0d4c0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: '宋体', serif;
+        }
+
+        .altar {
+            font-size: 6rem;
+            margin: 1rem 0;
+            text-shadow: 0 0 10px #ffaa33;
+        }
+
+        .platform {
+            width: 80%;
+            max-width: 800px;
+            min-height: 300px;
+            background: #3a2c25;
+            border: 3px solid #5a4a42;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .offering {
+            position: absolute;
+            font-size: 2.5rem;
+            transition: transform 0.3s;
+            cursor: pointer;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
+        }
+
+        .offering:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .controls {
+            display: flex;
+            gap: 2rem;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            background: #6b4f3a;
+            color: #ffe8c2;
+        }
+
+        button:disabled {
+            background: #44362d !important;
+            color: #7a6659 !important;
+            cursor: not-allowed;
+        }
+
+        button.active {
+            background: #9c6f4c;
+            box-shadow: 0 0 15px #ff9933;
+        }
+
+        .counter {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            color: #c0a080;
+        }
+
+        #timer {
+            color: #ff9966;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="altar">𓆏</div>
+    
+    <div class="controls">
+        <button id="incenseBtn" onclick="offer('incense')">🕯 晨香</button>
+        <button id="fruitBtn" onclick="offer('fruit')">🍎 鲜果</button>
+    </div>
+
+    <div class="platform" id="platform"></div>
+
+    <div class="counter">
+        今日已供：<span id="todayCount">0</span> 次 |
+        累计供品：<span id="totalCount">0</span> 次
+        <div id="timer"></div>
+    </div>
+
+    <script>
+        let offerings = [];
+        const STORAGE_KEY = "sacrificialData";
+        const MAX_DAILY = 1;
+
+        // 初始化加载
+        function init() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                offerings = data.offerings || [];
+                updateCounters();
+                renderOfferings();
+                checkDailyLimit();
+            }
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        // 供奉操作
+        function offer(type) {
+            if (!canOffer()) return;
+
+            const offering = {
+                type: type,
+                emoji: type === 'incense' ? '🕯' : '🍎',
+                date: new Date().toISOString(),
+                position: {
+                    x: Math.random() * 80 + 10,
+                    y: Math.random() * 70 + 15
+                }
+            };
+
+            offerings.push(offering);
+            saveData();
+            renderOfferings();
+            updateCounters();
+        }
+
+        // 渲染供品
+        function renderOfferings() {
+            const platform = document.getElementById('platform');
+            platform.innerHTML = '';
+            
+            offerings.forEach(offer => {
+                const elem = document.createElement('div');
+                elem.className = 'offering';
+                elem.style.left = `${offer.position.x}%`;
+                elem.style.top = `${offer.position.y}%`;
+                elem.innerHTML = offer.emoji;
+                platform.appendChild(elem);
+            });
+        }
+
+        // 检查每日限制
+        function canOffer() {
+            const today = new Date().toDateString();
+            const todayOffers = offerings.filter(o => 
+                new Date(o.date).toDateString() === today
+            ).length;
+            
+            if (todayOffers >= MAX_DAILY) {
+                alert('今日供奉已达上限，请明日再来，转给朋友，让金蟾为他们纳福，带来财运');
+                return false;
+            }
+            return true;
+        }
+
+        // 更新计数器
+        function updateCounters() {
+            const today = new Date().toDateString();
+            const todayCount = offerings.filter(o => 
+                new Date(o.date).toDateString() === today
+            ).length;
+            
+            document.getElementById('todayCount').textContent = todayCount;
+            document.getElementById('totalCount').textContent = offerings.length;
+        }
+
+        // 保存数据
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                offerings: offerings,
+                lastUpdate: new Date().toISOString()
+            }));
+        }
+
+        // 更新倒计时
+        function updateTimer() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+            
+            const diff = tomorrow - now;
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            
+            document.getElementById('timer').textContent = 
+                `重置倒计时：${hours}小时${minutes}分`;
+        }
+
+        // 初始化执行
+        init();
+    </script>
+</body>
+</html>
