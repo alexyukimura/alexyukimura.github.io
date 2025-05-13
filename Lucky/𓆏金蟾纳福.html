@@ -87,7 +87,10 @@
 </head>
 <body>
     <div class="altar">𓆏</div>
-    
+    <div id="customAlert" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #2a1e1a; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000; text-align: center;">
+        <p id="alertMessage"></p>
+        <button onclick="closeCustomAlert()" style="margin: 10px auto; display: block;">确定</button>
+    </div>
     <div class="controls">
         <button id="incenseBtn" onclick="offer('incense')">🕯 晨香</button>
         <button id="fruitBtn" onclick="offer('fruit')">🍎 鲜果</button>
@@ -163,7 +166,7 @@
             ).length;
             
             if (todayOffers >= MAX_DAILY) {
-                alert('今日供奉已达上限，请明日再来，转给朋友，让金蟾为他们纳福，带来财运');
+                showCustomAlert('今日供奉已达上限，请明日再来，转给朋友，让金蟾为他们纳福，带来财运');
                 return false;
             }
             return true;
@@ -203,6 +206,40 @@
                 `重置倒计时：${hours}小时${minutes}分`;
         }
 
+        function showCustomAlert(message) {
+            document.getElementById('alertMessage').textContent = message;
+            document.getElementById('customAlert').style.display = 'block';
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('customAlert').style.display = 'none';
+        }
+
+        function shareContent() {
+            const shareText = '今日供奉已达上限，请明日再来，转给朋友，让金蟾为他们纳福，带来财运';
+            const pageLink = window.location.href;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: '金蟾纳福',
+                    text: shareText,
+                    url: pageLink
+                })
+                .then(() => console.log('分享成功'))
+                .catch((error) => console.error('分享失败:', error));
+            } else {
+                // 不支持 navigator.share 时，使用剪贴板方式
+                const shareContent = `${shareText}\n${pageLink}`;
+                navigator.clipboard.writeText(shareContent)
+                    .then(() => {
+                        alert('分享内容已复制到剪贴板！');
+                    })
+                    .catch((error) => {
+                        console.error('复制失败:', error);
+                        alert('复制失败，请手动复制内容。');
+                    });
+            }
+        }
         // 初始化执行
         init();
     </script>
