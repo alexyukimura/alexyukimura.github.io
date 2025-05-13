@@ -83,6 +83,13 @@
             color: #ff9966;
             margin-top: 10px;
         }
+
+        footer {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #c0a080;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -103,6 +110,10 @@
         累计供品：<span id="totalCount">0</span> 次
         <div id="timer"></div>
     </div>
+
+    <footer>
+        本内容为娱乐工具，与任何宗教活动无关，请理性使用。
+    </footer>
 
     <script>
         let offerings = [];
@@ -166,7 +177,8 @@
             ).length;
             
             if (todayOffers >= MAX_DAILY) {
-                showCustomAlert('今日供奉已达上限，请明日再来，转给朋友，让金蟾为他们纳福，带来财运');
+                //showCustomAlert('今日供奉已达上限，请明日再来，转给朋友，让金蟾为他们纳福，带来财运');
+                showCustomAlert('今日供奉已达上限，请明日再来。');
                 return false;
             }
             return true;
