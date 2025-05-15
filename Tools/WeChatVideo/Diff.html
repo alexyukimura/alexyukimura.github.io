@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>眼力挑战：99%的人找不到不同汉字！你能几秒找到吗？</title>
     <style>
+        :root {
+            --cell-bg: #fff;
+            --cell-border: #b0c4de;
+            --cell-text: #2d3a4b;
+            --cell-hover-bg: #d0e6fa;
+            --cell-hover-text: #e94f4a;
+            --cell-shadow: #d0d0d0;
+            --cell-hover-shadow: #b0c4de;
+        }
         html {
             font-size: 16px;
         }
@@ -14,16 +23,24 @@
             text-align: center;
             margin: 0;
             padding: 0;
+            transition: background-color 0.5s ease;
         }
         #main-title {
             margin-top: 2.5rem;
-            color: #e94f4a;
             font-size: 2.2rem;
             font-weight: bold;
             letter-spacing: 2px;
-            text-shadow: 1px 1px 8px #fff;
             padding: 0 1rem;
             word-break: break-all;
+            background: linear-gradient(45deg, #e94f4a, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleGlow 2s infinite alternate;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 2px rgba(233, 79, 74, 0.3)); }
+            100% { filter: drop-shadow(0 0 8px rgba(233, 79, 74, 0.6)); }
         }
         #timer-tip-wrap {
             display: flex;
@@ -33,6 +50,51 @@
             margin-bottom: 0.5rem;
             gap: 1.2rem;
         }
+        .timer-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            position: relative;
+        }
+        .timer-icon {
+            width: 2.8rem;
+            height: 2.8rem;
+            background: linear-gradient(135deg, #fff 0%, #f0f4f8 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(176, 196, 222, 0.4),
+                        inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+            animation: float 2s ease-in-out infinite;
+            font-size: 1.5rem;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        .timer-icon::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.2;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .timer-icon:hover {
+            transform: scale(1.1);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-5px) rotate(5deg); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+        }
         #timer {
             font-size: 1.3rem;
             color: #357abd;
@@ -40,10 +102,16 @@
             letter-spacing: 1px;
             display: inline-block;
             vertical-align: middle;
-            background: #fff;
+            background: linear-gradient(135deg, #fff 0%, #f0f4f8 100%);
             border-radius: 0.7rem;
             padding: 0.4rem 1.2rem;
-            box-shadow: 0 2px 8px #b0c4de;
+            box-shadow: 0 4px 12px rgba(176, 196, 222, 0.4),
+                        inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        #timer:hover {
+            transform: translateY(-2px);
         }
         #find-tip {
             display: inline-block;
@@ -59,23 +127,24 @@
             text-shadow: 1px 1px 8px #ffecb3, 0 2px 8px #e94f4a;
             border: 2.5px solid #fffbe6;
             margin: 0;
+            overflow: hidden;
         }
-        .shake-x {
+        #find-tip span {
             display: inline-block;
-            animation: shakeX 1s infinite linear;
+            animation: scale 1.5s infinite ease-in-out;
         }
-        @keyframes shakeX {
-            0% { transform: translateX(0); }
-            10% { transform: translateX(-6px); }
-            20% { transform: translateX(6px); }
-            30% { transform: translateX(-5px); }
-            40% { transform: translateX(5px); }
-            50% { transform: translateX(-4px); }
-            60% { transform: translateX(4px); }
-            70% { transform: translateX(-2px); }
-            80% { transform: translateX(2px); }
-            90% { transform: translateX(-1px); }
-            100% { transform: translateX(0); }
+        .find-tip-movein {
+            animation: moveInRight 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+        }
+        @keyframes moveInRight {
+            0% { transform: translateX(120%); opacity: 0; }
+            80% { transform: translateX(-8%); opacity: 1; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes scale {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
         #game-board {
             display: inline-block;
@@ -86,6 +155,7 @@
             box-shadow: 0 2px 16px #b0c4de;
             padding: 1.2rem 0.5rem 0.8rem 0.5rem;
             max-width: 98vw;
+            transition: all 0.5s ease;
         }
         .row {
             display: flex;
@@ -98,20 +168,20 @@
             align-items: center;
             justify-content: center;
             font-size: 2rem;
-            border: 1.5px solid #b0c4de;
+            border: 1.5px solid var(--cell-border);
             cursor: pointer;
-            background: #fff;
-            color: #2d3a4b;
+            background: var(--cell-bg);
+            color: var(--cell-text);
             margin: 0.18rem;
             border-radius: 0.5rem;
-            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-            box-shadow: 0 1px 4px #d0d0d0;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 4px var(--cell-shadow);
             user-select: none;
         }
         .cell:hover, .cell:active {
-            background: #d0e6fa;
-            color: #e94f4a;
-            box-shadow: 0 2px 8px #b0c4de;
+            background: var(--cell-hover-bg);
+            color: var(--cell-hover-text);
+            box-shadow: 0 2px 8px var(--cell-hover-shadow);
         }
         .center-btn {
             width: 100%;
@@ -119,7 +189,7 @@
             justify-content: center;
             align-items: center;
         }
-        #restart, #record-btn {
+        #restart {
             margin-top: 1.2rem;
             margin-bottom: 0.5rem;
             padding: 0.8rem 2.2rem;
@@ -135,13 +205,9 @@
             transition: background 0.2s;
             display: inline-block;
         }
-        #restart:hover, #record-btn:hover, #restart:active, #record-btn:active {
+        #restart:hover, #restart:active {
             background: #357abd;
         }
-        #record-btn {
-            margin-left: 0.8rem;
-        }
-        /* 弹窗动画 */
         #popup {
             display: none;
             position: fixed;
@@ -171,6 +237,11 @@
                 flex-direction: column;
                 gap: 0.7rem;
             }
+            .timer-icon {
+                width: 2.4rem;
+                height: 2.4rem;
+                font-size: 1.3rem;
+            }
             #timer {
                 font-size: 1.1rem;
                 padding: 0.35rem 1.1rem;
@@ -182,137 +253,112 @@
             }
             #game-board { padding: 1rem 0.3rem 1rem 0.3rem; }
             .cell { width: 3rem; height: 3rem; font-size: 1.8rem; }
-            #restart, #record-btn { font-size: 1.3rem; padding: 1rem 2rem; }
+            #restart { font-size: 1.3rem; padding: 1rem 2rem; }
             #popup { font-size: 1.5rem; padding: 1.5rem 2rem; }
-        }
-        /* 新增样式 */
-        .share-buttons {
-            margin-top: 1rem;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-        
-        .share-btn {
-            padding: 0.6rem 1.2rem;
-            font-size: 1rem;
-            background: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 0.4rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .achievement {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: #fff;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            display: none;
-        }
-        
-        .leaderboard {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: #fff;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            display: none;
-        }
-        
-        .leaderboard h3 {
-            color: #4a90e2;
-            margin-bottom: 1rem;
-        }
-        
-        .leaderboard-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .comment-section {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: #fff;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .comment-input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 0.4rem;
-            margin-bottom: 1rem;
-        }
-        
-        .submit-comment {
-            padding: 0.6rem 1.2rem;
-            background: #4a90e2;
-            color: #fff;
-            border: none;
-            border-radius: 0.4rem;
-            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <h1 id="main-title">眼力挑战：99%的人找不到不同汉字！你能几秒找到吗？</h1>
     <div id="timer-tip-wrap">
-        <div id="timer">用时：0.00 秒</div>
-        <span id="find-tip">找出图中"钱"</span>
+        <div class="timer-wrap">
+            <div class="timer-icon">⏱️</div>
+            <div id="timer">用时：0.00 秒</div>
+        </div>
+        <span id="find-tip">找出图中"<span>钱</span>"</span>
     </div>
     <div id="game-board"></div>
     <div class="center-btn">
         <button id="restart" onclick="startGame()">重新开始</button>
     </div>
     <div id="popup"></div>
-    <div class="share-buttons">
-        <button class="share-btn" onclick="shareToWeChat()">
-            <span>分享到微信</span>
-        </button>
-        <button class="share-btn" onclick="shareToWeibo()">
-            <span>分享到微博</span>
-        </button>
-    </div>
     
-    <div class="achievement" id="achievement">
-        <h3>🏆 获得成就！</h3>
-        <p id="achievement-text"></p>
-    </div>
+    <!-- 先加载字库 -->
+    <script src="./charPairs.js"></script>
     
-    <div class="leaderboard" id="leaderboard">
-        <h3>🏆 排行榜</h3>
-        <div id="leaderboard-content"></div>
-    </div>
-    <script src="charPairs.js"></script>
+    <!-- 然后加载游戏逻辑 -->
     <script>
-        const gridSize = 6; // 6x6，适合中老年人
+        // 确保字库已加载
+        if (!window.charPairs || !window.charPairs.length) {
+            console.error('字库加载失败！');
+            document.getElementById('popup').textContent = '游戏初始化失败，请刷新页面重试';
+            document.getElementById('popup').style.display = 'block';
+            throw new Error('字库加载失败');
+        }
+
+        const gridSize = 6;
         let normalChar = "目";
         let diffChar = "日";
         let timerInterval = null;
         let startTime = null;
         let timerStopped = false;
 
-        // 录制相关变量
-        let mediaRecorder = null;
-        let recordedChunks = [];
-        let isRecording = false;
-        let stream = null;
+        // 柔和背景色
+        const backgroundColors = [
+            '#f2f6f9', '#f5f5f0', '#f0f4f8', '#f8f4f0', '#f0f8f4', '#f4f0f8', '#fff8f0', '#f0f8f8'
+        ];
+        // 对应边框色
+        const borderColors = [
+            '#4a90e2', '#8e44ad', '#27ae60', '#e67e22', '#c0392b', '#16a085', '#d35400', '#2980b9'
+        ];
+        // 柔和格子底色
+        const cellBgColors = [
+            '#fff', '#f9f6f2', '#f6fff2', '#f2f6ff', '#f2fff6', '#fff6f2', '#f6f2ff', '#fffaf2'
+        ];
+        // 格子边框色
+        const cellBorderColors = [
+            '#b0c4de', '#d0c4e0', '#b0e0c4', '#e0c4b0', '#e0b0b0', '#b0e0d0', '#e0d0b0', '#b0d0e0'
+        ];
+        // 格子文字色
+        const cellTextColors = [
+            '#2d3a4b', '#3a2d4b', '#2d4b3a', '#4b3a2d', '#4b2d2d', '#2d4b4b', '#4b4b2d', '#2d3a4b'
+        ];
+        // 格子悬停背景色
+        const cellHoverBgColors = [
+            '#d0e6fa', '#e6d0fa', '#d0fae6', '#fae6d0', '#fad0d0', '#d0fafa', '#fafad0', '#d0e6fa'
+        ];
+        // 格子悬停文字色
+        const cellHoverTextColors = [
+            '#e94f4a', '#9f4ae9', '#4ae994', '#e9944a', '#e94a4a', '#4ae9e9', '#e9e94a', '#4a94e9'
+        ];
+        // 格子阴影色
+        const cellShadowColors = [
+            '#d0d0d0', '#e0d0e0', '#d0e0d0', '#e0d0d0', '#e0d0d0', '#d0e0e0', '#e0e0d0', '#d0d0e0'
+        ];
+        // 格子悬停阴影色
+        const cellHoverShadowColors = [
+            '#b0c4de', '#c4b0de', '#b0dec4', '#dec4b0', '#deb0b0', '#b0dede', '#dedeb0', '#b0c4de'
+        ];
 
         let bestTime = localStorage.getItem('bestTime') || Infinity;
         let achievementUnlocked = false;
 
         function getRandomInt(max) {
             return Math.floor(Math.random() * max);
+        }
+
+        function updateBackgroundColor() {
+            const index = getRandomInt(backgroundColors.length);
+            const randomColor = backgroundColors[index];
+            const randomBorderColor = borderColors[index];
+            
+            // 更新背景色
+            document.body.style.backgroundColor = randomColor;
+            
+            // 更新游戏区域样式
+            const board = document.getElementById('game-board');
+            board.style.borderColor = randomBorderColor;
+            board.style.boxShadow = `0 2px 16px ${randomBorderColor}40`;
+            board.style.background = `${randomColor}dd`;
+            
+            // 更新CSS变量
+            document.documentElement.style.setProperty('--cell-bg', cellBgColors[index]);
+            document.documentElement.style.setProperty('--cell-border', cellBorderColors[index]);
+            document.documentElement.style.setProperty('--cell-text', cellTextColors[index]);
+            document.documentElement.style.setProperty('--cell-hover-bg', cellHoverBgColors[index]);
+            document.documentElement.style.setProperty('--cell-hover-text', cellHoverTextColors[index]);
+            document.documentElement.style.setProperty('--cell-shadow', cellShadowColors[index]);
+            document.documentElement.style.setProperty('--cell-hover-shadow', cellHoverShadowColors[index]);
         }
 
         function startTimer() {
@@ -342,164 +388,84 @@
         }
 
         function startGame() {
-            document.getElementById('game-board').innerHTML = '';
+            try {
+                document.getElementById('game-board').innerHTML = '';
+                updateBackgroundColor();
 
-            // 随机选择一组汉字
-            const pair = window.charPairs[getRandomInt(window.charPairs.length)];
-            normalChar = pair[0];
-            diffChar = pair[1];
-
-            // 动态更新提示内容
-            const findTip = document.getElementById('find-tip');
-            if (findTip) {
-                findTip.innerHTML = `找出图中"${diffChar}"`;
-            }
-
-            // 随机生成不同字的位置
-            const diffRow = getRandomInt(gridSize);
-            const diffCol = getRandomInt(gridSize);
-
-            startTimer();
-
-            for (let i = 0; i < gridSize; i++) {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'row';
-                for (let j = 0; j < gridSize; j++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.textContent = (i === diffRow && j === diffCol) ? diffChar : normalChar;
-                    cell.onclick = function() {
-                        if (timerStopped) return;
-                        if (i === diffRow && j === diffCol) {
-                            handleGameWin();
-                        }
-                    };
-                    rowDiv.appendChild(cell);
+                // 随机选择一组汉字
+                const pair = window.charPairs[getRandomInt(window.charPairs.length)];
+                if (!pair || pair.length !== 2) {
+                    throw new Error('无效的汉字对');
                 }
-                document.getElementById('game-board').appendChild(rowDiv);
-            }
-        }
+                normalChar = pair[0];
+                diffChar = pair[1];
 
-        // 录制功能
-        async function toggleRecording() {
-            const btn = document.getElementById('record-btn');
-            if (!isRecording) {
-                // 开始录制
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-                    alert('当前浏览器不支持屏幕录制');
-                    return;
+                // 动态更新提示内容并加右侧移入动画
+                const findTip = document.getElementById('find-tip');
+                if (findTip) {
+                    findTip.innerHTML = `找出图中"<span>${diffChar}</span>"`;
+                    findTip.classList.remove('find-tip-movein');
+                    // 触发重绘
+                    void findTip.offsetWidth;
+                    findTip.classList.add('find-tip-movein');
                 }
-                try {
-                    stream = await navigator.mediaDevices.getDisplayMedia({
-                        video: { mediaSource: "screen" },
-                        audio: false
-                    });
-                    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
-                    recordedChunks = [];
-                    mediaRecorder.ondataavailable = function(e) {
-                        if (e.data.size > 0) recordedChunks.push(e.data);
-                    };
-                    mediaRecorder.onstop = function() {
-                        const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.href = url;
-                        a.download = 'find-diff-hanzi.webm';
-                        document.body.appendChild(a);
-                        a.click();
-                        setTimeout(() => {
-                            document.body.removeChild(a);
-                            window.URL.revokeObjectURL(url);
-                        }, 100);
-                    };
-                    mediaRecorder.start();
-                    isRecording = true;
-                    btn.textContent = '停止录制并下载';
-                    showPopup('正在录制屏幕...');
-                } catch (err) {
-                    alert('录制失败：' + err);
+
+                // 随机生成不同字的位置
+                const diffRow = getRandomInt(gridSize);
+                const diffCol = getRandomInt(gridSize);
+
+                startTimer();
+
+                for (let i = 0; i < gridSize; i++) {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'row';
+                    for (let j = 0; j < gridSize; j++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.textContent = (i === diffRow && j === diffCol) ? diffChar : normalChar;
+                        cell.onclick = function() {
+                            if (timerStopped) return;
+                            if (i === diffRow && j === diffCol) {
+                                handleGameWin();
+                            }
+                        };
+                        rowDiv.appendChild(cell);
+                    }
+                    document.getElementById('game-board').appendChild(rowDiv);
                 }
-            } else {
-                // 停止录制
-                mediaRecorder.stop();
-                stream.getTracks().forEach(track => track.stop());
-                isRecording = false;
-                btn.textContent = '开始录制视频';
-                showPopup('录制已结束，正在下载...');
+            } catch (error) {
+                console.error('游戏初始化失败:', error);
+                showPopup('游戏初始化失败，请刷新页面重试');
             }
-        }
-
-        function showAchievement(text) {
-            const achievement = document.getElementById('achievement');
-            document.getElementById('achievement-text').textContent = text;
-            achievement.style.display = 'block';
-            setTimeout(() => {
-                achievement.style.display = 'none';
-            }, 3000);
-        }
-
-        function updateLeaderboard(time) {
-            const leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-            leaderboard.push({
-                time: time,
-                date: new Date().toLocaleDateString()
-            });
-            leaderboard.sort((a, b) => a.time - b.time);
-            leaderboard.splice(10); // 只保留前10名
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-            
-            // 显示排行榜
-            const leaderboardContent = document.getElementById('leaderboard-content');
-            leaderboardContent.innerHTML = leaderboard.map((entry, index) => `
-                <div class="leaderboard-item">
-                    <span>第${index + 1}名</span>
-                    <span>${entry.time.toFixed(2)}秒</span>
-                    <span>${entry.date}</span>
-                </div>
-            `).join('');
-            document.getElementById('leaderboard').style.display = 'block';
-        }
-
-        function shareToWeChat() {
-            showPopup('请点击右上角"..."按钮，选择"分享到朋友圈"或"发送给朋友"');
-        }
-
-        function shareToWeibo() {
-            const text = `我在眼力挑战游戏中用时${(Date.now() - startTime) / 1000}秒找到不同汉字！快来挑战吧！`;
-            window.open(`http://service.weibo.com/share/share.php?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(text)}`);
         }
 
         function handleGameWin() {
             const currentTime = (Date.now() - startTime) / 1000;
             stopTimer();
-            
-            // 更新最佳成绩
             if (currentTime < bestTime) {
                 bestTime = currentTime;
                 localStorage.setItem('bestTime', bestTime);
-                showAchievement('🎉 新纪录！你是最快的！');
+                showPopup('🎉 新纪录！你是最快的！');
             }
-            
-            // 根据用时给予不同评价
             let message = '';
             if (currentTime < 5) {
                 message = '太厉害了！你是火眼金睛！';
-                showAchievement('👑 获得"火眼金睛"成就！');
             } else if (currentTime < 10) {
                 message = '不错！你的眼力很好！';
-                showAchievement('🌟 获得"眼力达人"成就！');
             } else {
                 message = '继续加油！';
             }
-            
-            updateLeaderboard(currentTime);
-            showPopup('恭喜你，找到了不同的汉字！');
+            showPopup(message);
         }
 
-        // 页面加载时自动开始
+        // 等待页面加载完成后启动游戏
         window.onload = function() {
-            startGame();
+            try {
+                startGame();
+            } catch (error) {
+                console.error('游戏启动失败:', error);
+                showPopup('游戏启动失败，请刷新页面重试');
+            }
         };
     </script>
 </body>
