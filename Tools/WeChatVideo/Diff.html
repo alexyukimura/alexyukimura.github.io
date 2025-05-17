@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>眼力挑战：99%的人找不到不同汉字！你能几秒找到吗？</title>
+    <title>火眼金睛挑战：找出不同汉字！你能几秒完成？</title>
     <style>
         :root {
             --cell-bg: #fff;
@@ -27,20 +27,46 @@
         }
         #main-title {
             margin-top: 2.5rem;
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: bold;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             padding: 0 1rem;
             word-break: break-all;
-            background: linear-gradient(45deg, #e94f4a, #ff6b6b);
+            background: linear-gradient(45deg, #ff6b6b, #4a90e2, #ffb300);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: titleGlow 2s infinite alternate;
+            animation: titleGradient 3s ease infinite, titleGlow 2s infinite alternate;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+        }
+        #main-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff6b6b, #4a90e2, transparent);
+            border-radius: 3px;
+            animation: titleLine 3s ease infinite;
+        }
+        @keyframes titleGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         @keyframes titleGlow {
             0% { filter: drop-shadow(0 0 2px rgba(233, 79, 74, 0.3)); }
-            100% { filter: drop-shadow(0 0 8px rgba(233, 79, 74, 0.6)); }
+            50% { filter: drop-shadow(0 0 8px rgba(74, 144, 226, 0.6)); }
+            100% { filter: drop-shadow(0 0 2px rgba(255, 179, 0, 0.3)); }
+        }
+        @keyframes titleLine {
+            0% { opacity: 0.3; transform: translateX(-50%) scaleX(0.8); }
+            50% { opacity: 1; transform: translateX(-50%) scaleX(1); }
+            100% { opacity: 0.3; transform: translateX(-50%) scaleX(0.8); }
         }
         #timer-tip-wrap {
             display: flex;
@@ -162,17 +188,17 @@
             justify-content: center;
         }
         .cell {
-            width: 2.8rem;
-            height: 2.8rem;
+            width: 2.4rem;
+            height: 2.4rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 1.8rem;
             border: 1.5px solid var(--cell-border);
             cursor: pointer;
             background: var(--cell-bg);
             color: var(--cell-text);
-            margin: 0.18rem;
+            margin: 0.15rem;
             border-radius: 0.5rem;
             transition: all 0.3s ease;
             box-shadow: 0 1px 4px var(--cell-shadow);
@@ -230,36 +256,200 @@
             0% { opacity: 0; transform: scale(0.7) translate(-50%, -50%);}
             100% { opacity: 1; transform: scale(1) translate(-50%, -50%);}
         }
+        #header-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 1.2rem;
+            padding: 0 0.5rem;
+            margin-top: 1.2rem;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #camera-container {
+            position: relative;
+            width: 80px;
+            height: 60px;
+            background: #000;
+            border-radius: 0.6rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            z-index: 100;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #main-title {
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            margin: 0;
+            text-align: left;
+            min-width: 0;
+            flex: 1;
+        }
+        #camera-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #000;
+        }
+        #camera-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.4rem;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #camera-container:hover #camera-controls {
+            opacity: 1;
+        }
+        .camera-btn {
+            width: 1.8rem;
+            height: 1.8rem;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        .camera-btn:hover {
+            transform: scale(1.1);
+            background: #fff;
+        }
+        .camera-btn:active {
+            transform: scale(0.95);
+        }
+        @media (max-width: 1200px) {
+            #header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            #camera-container {
+                width: 240px;
+                height: 180px;
+            }
+        }
         @media (max-width: 600px) {
-            html { font-size: 18px; }
-            #main-title { font-size: 1.8rem; }
+            html { 
+                font-size: 16px; 
+            }
+            #header-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0 0.2rem;
+                margin-top: 0.6rem;
+            }
+            #camera-container {
+                width: 60px;
+                height: 45px;
+                border-radius: 0.4rem;
+            }
+            #main-title {
+                font-size: 1.05rem;
+                text-align: center;
+            }
             #timer-tip-wrap {
                 flex-direction: column;
-                gap: 0.7rem;
+                gap: 0.5rem;
+                margin-top: 0.8rem;
+                margin-bottom: 0.3rem;
+            }
+            .timer-wrap {
+                gap: 0.5rem;
             }
             .timer-icon {
-                width: 2.4rem;
-                height: 2.4rem;
-                font-size: 1.3rem;
+                width: 2rem;
+                height: 2rem;
+                font-size: 1.1rem;
             }
             #timer {
-                font-size: 1.1rem;
-                padding: 0.35rem 1.1rem;
+                font-size: 1rem;
+                padding: 0.3rem 0.8rem;
             }
             #find-tip {
-                font-size: 1.05rem;
-                padding: 0.35rem 1.1rem;
+                font-size: 0.95rem;
+                padding: 0.3rem 0.8rem;
                 border-radius: 0.8rem;
+                letter-spacing: 1px;
             }
-            #game-board { padding: 1rem 0.3rem 1rem 0.3rem; }
-            .cell { width: 3rem; height: 3rem; font-size: 1.8rem; }
-            #restart { font-size: 1.3rem; padding: 1rem 2rem; }
-            #popup { font-size: 1.5rem; padding: 1.5rem 2rem; }
+            #game-board { 
+                padding: 0.8rem 0.2rem;
+                margin-top: 1rem;
+                max-width: 92vw;
+            }
+            .cell { 
+                width: 2rem; 
+                height: 2rem; 
+                font-size: 1.4rem;
+                margin: 0.1rem;
+                border-radius: 0.4rem;
+            }
+            #camera-container {
+                width: 120px;
+                height: 90px;
+                border-radius: 0.6rem;
+            }
+            .camera-btn {
+                width: 1.4rem;
+                height: 1.4rem;
+                font-size: 0.8rem;
+            }
+            #camera-controls {
+                padding: 0.3rem;
+                gap: 0.3rem;
+            }
+            #restart { 
+                font-size: 1.1rem; 
+                padding: 0.8rem 1.6rem;
+                margin-top: 1rem;
+                margin-bottom: 0.3rem;
+            }
+            #popup { 
+                font-size: 1.2rem; 
+                padding: 1.2rem 1.6rem;
+                max-width: 85vw;
+            }
+        }
+
+        /* 针对超小屏幕的优化 */
+        @media (max-width: 360px) {
+            html { 
+                font-size: 14px; 
+            }
+            #main-title {
+                font-size: 1.2rem;
+            }
+            .cell { 
+                width: 1.8rem; 
+                height: 1.8rem; 
+                font-size: 1.2rem;
+            }
+            #camera-container {
+                width: 100px;
+                height: 75px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1 id="main-title">眼力挑战：99%的人找不到不同汉字！你能几秒找到吗？</h1>
+    <div id="header-container">
+        <div id="camera-container"></div>
+        <h1 id="main-title">火眼金睛挑战：找出不同汉字！你能几秒完成？</h1>
+    </div>
     <div id="timer-tip-wrap">
         <div class="timer-wrap">
             <div class="timer-icon">⏱️</div>
@@ -286,7 +476,7 @@
             throw new Error('字库加载失败');
         }
 
-        const gridSize = 6;
+        const gridSize = 8;
         let normalChar = "目";
         let diffChar = "日";
         let timerInterval = null;
@@ -448,9 +638,9 @@
                 showPopup('🎉 新纪录！你是最快的！');
             }
             let message = '';
-            if (currentTime < 5) {
+            if (currentTime < 8) {
                 message = '太厉害了！你是火眼金睛！';
-            } else if (currentTime < 10) {
+            } else if (currentTime < 15) {
                 message = '不错！你的眼力很好！';
             } else {
                 message = '继续加油！';
