@@ -326,41 +326,104 @@
         let startTime = null;
         let timerStopped = false;
 
-        // 柔和背景色
+        // 背景色
         const backgroundColors = [
-            '#f2f6f9', '#f5f5f0', '#f0f4f8', '#f8f4f0', '#f0f8f4', '#f4f0f8', '#fff8f0', '#f0f8f8'
+            '#2C3E50', // 深蓝灰
+            '#1A1A2E', // 深蓝黑
+            '#16213E', // 深海军蓝
+            '#1B262C', // 深青灰
+            '#2D3436', // 深灰
+            '#2C1810', // 深棕
+            '#1B1B2F', // 深紫蓝
+            '#1A1A1A'  // 纯黑
         ];
         // 对应边框色
         const borderColors = [
-            '#4a90e2', '#8e44ad', '#27ae60', '#e67e22', '#c0392b', '#16a085', '#d35400', '#2980b9'
+            '#E74C3C', // 鲜红
+            '#00B894', // 薄荷绿
+            '#FDCB6E', // 明黄
+            '#0984E3', // 天蓝
+            '#6C5CE7', // 紫色
+            '#FF7675', // 珊瑚红
+            '#00CEC9', // 青绿
+            '#FFA502'  // 橙色
         ];
-        // 柔和格子底色
+        // 格子底色
         const cellBgColors = [
-            '#fff', '#f9f6f2', '#f6fff2', '#f2f6ff', '#f2fff6', '#fff6f2', '#f6f2ff', '#fffaf2'
+            ['#FFE4E1', '#FFB6C1', '#FFC0CB', '#FFA07A', '#FFDAB9'], // 粉红系
+            ['#98FB98', '#90EE90', '#7FFFD4', '#66CDAA', '#20B2AA'], // 清新绿系
+            ['#FFD700', '#FFA500', '#FF8C00', '#FF7F50', '#FF6347'], // 金橙系
+            ['#87CEEB', '#00BFFF', '#1E90FF', '#4169E1', '#6495ED'], // 天蓝系
+            ['#DDA0DD', '#EE82EE', '#DA70D6', '#BA55D3', '#9370DB'], // 紫色系
+            ['#F0E68C', '#FFD700', '#FFA500', '#FF8C00', '#FF7F50'], // 金黄系
+            ['#E6E6FA', '#D8BFD8', '#DDA0DD', '#EE82EE', '#DA70D6'], // 淡紫系
+            ['#B0E0E6', '#87CEEB', '#00BFFF', '#1E90FF', '#4169E1']  // 淡蓝系
         ];
         // 格子边框色
         const cellBorderColors = [
-            '#b0c4de', '#d0c4e0', '#b0e0c4', '#e0c4b0', '#e0b0b0', '#b0e0d0', '#e0d0b0', '#b0d0e0'
+            '#BDC3C7', // 浅灰
+            '#DFE4EA', // 淡灰
+            '#DCDDE1', // 银灰
+            '#F1F2F6', // 淡灰白
+            '#DFE4EA', // 淡灰
+            '#DCDDE1', // 银灰
+            '#F1F2F6', // 淡灰白
+            '#DFE4EA'  // 淡灰
         ];
         // 格子文字色
         const cellTextColors = [
-            '#2d3a4b', '#3a2d4b', '#2d4b3a', '#4b3a2d', '#4b2d2d', '#2d4b4b', '#4b4b2d', '#2d3a4b'
+            '#2C3E50', // 深蓝灰
+            '#1A1A2E', // 深蓝黑
+            '#16213E', // 深海军蓝
+            '#1B262C', // 深青灰
+            '#2D3436', // 深灰
+            '#2C1810', // 深棕
+            '#1B1B2F', // 深紫蓝
+            '#1A1A1A'  // 纯黑
         ];
         // 格子悬停背景色
         const cellHoverBgColors = [
-            '#d0e6fa', '#e6d0fa', '#d0fae6', '#fae6d0', '#fad0d0', '#d0fafa', '#fafad0', '#d0e6fa'
+            '#E74C3C', // 鲜红
+            '#00B894', // 薄荷绿
+            '#FDCB6E', // 明黄
+            '#0984E3', // 天蓝
+            '#6C5CE7', // 紫色
+            '#FF7675', // 珊瑚红
+            '#00CEC9', // 青绿
+            '#FFA502'  // 橙色
         ];
         // 格子悬停文字色
         const cellHoverTextColors = [
-            '#e94f4a', '#9f4ae9', '#4ae994', '#e9944a', '#e94a4a', '#4ae9e9', '#e9e94a', '#4a94e9'
+            '#FFFFFF', // 纯白
+            '#FFFFFF', // 纯白
+            '#FFFFFF', // 纯白
+            '#FFFFFF', // 纯白
+            '#FFFFFF', // 纯白
+            '#FFFFFF', // 纯白
+            '#FFFFFF', // 纯白
+            '#FFFFFF'  // 纯白
         ];
         // 格子阴影色
         const cellShadowColors = [
-            '#d0d0d0', '#e0d0e0', '#d0e0d0', '#e0d0d0', '#e0d0d0', '#d0e0e0', '#e0e0d0', '#d0d0e0'
+            '#95A5A6', // 中灰
+            '#B2BEC3', // 浅灰
+            '#A4B0BE', // 淡灰
+            '#B2BEC3', // 浅灰
+            '#95A5A6', // 中灰
+            '#B2BEC3', // 浅灰
+            '#A4B0BE', // 淡灰
+            '#B2BEC3'  // 浅灰
         ];
         // 格子悬停阴影色
         const cellHoverShadowColors = [
-            '#b0c4de', '#c4b0de', '#b0dec4', '#dec4b0', '#deb0b0', '#b0dede', '#dedeb0', '#b0c4de'
+            '#C0392B', // 深红
+            '#00A884', // 深薄荷绿
+            '#E6B84C', // 深黄
+            '#0873C4', // 深蓝
+            '#5B4BC4', // 深紫
+            '#E65C5B', // 深珊瑚红
+            '#00B5B0', // 深青绿
+            '#E69400'  // 深橙
         ];
 
         let bestTime = localStorage.getItem('bestTime') || Infinity;
@@ -447,6 +510,10 @@
                 const diffRow = getRandomInt(gridSize);
                 const diffCol = getRandomInt(gridSize);
 
+                // 获取当前配色方案
+                const colorIndex = getRandomInt(backgroundColors.length);
+                const currentCellBgs = cellBgColors[colorIndex];
+
                 startTimer();
 
                 for (let i = 0; i < gridSize; i++) {
@@ -456,6 +523,8 @@
                         const cell = document.createElement('div');
                         cell.className = 'cell';
                         cell.textContent = (i === diffRow && j === diffCol) ? diffChar : normalChar;
+                        // 随机选择当前配色方案中的一个背景色
+                        cell.style.backgroundColor = currentCellBgs[getRandomInt(currentCellBgs.length)];
                         cell.onclick = function() {
                             if (timerStopped) return;
                             if (i === diffRow && j === diffCol) {
