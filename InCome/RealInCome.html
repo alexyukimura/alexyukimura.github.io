@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实时收入计算器</title>
+  <style>
+    :root {
+      --primary-color: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary-color: #f43f5e;
+      --bg-gradient: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 500px;
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 2.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .tips {
+      background: #fef3c7;
+      color: #92400e;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      border: 1px solid #fbbf24;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      align-items: center;
+    }
+
+    .input-row label {
+      flex: 1;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .input-row input {
+      flex: 2;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .input-row input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 1.5rem 0;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .result-area {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .result-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding: 0.5rem 0;
+    }
+
+    .result-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .result-label {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .result-value {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--secondary-color);
+    }
+
+    .divider {
+      border-top: 1px dashed #e2e8f0;
+      margin: 1.25rem 0;
+    }
+
+    .rate-container {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .rate-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem;
+      background: white;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .rate-row:hover {
+      transform: translateX(4px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .rate-label {
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+
+    .rate-value {
+      font-weight: 600;
+      color: var(--secondary-color);
+    }
+
+    /* 添加上班状态动画样式 */
+    @keyframes working {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .working-animation {
+      animation: working 1.5s infinite;
+      background: var(--primary-color);
+    }
+
+    .slacking-animation {
+      animation: working 2s infinite;
+      background: var(--secondary-color);
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+      background: #22c55e;
+    }
+
+    .status-indicator.working {
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    .status-indicator.slacking {
+      background: #f43f5e;
+      box-shadow: 0 0 8px #f43f5e;
+    }
+
+    .status-text {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    /* 游戏化功能样式 */
+    .game-features {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .achievement {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      background: white;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .achievement:hover {
+      transform: translateX(4px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .achievement-icon {
+      width: 32px;
+      height: 32px;
+      margin-right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      font-size: 1.2rem;
+    }
+
+    .achievement-info {
+      flex: 1;
+    }
+
+    .achievement-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .achievement-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .event-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      max-width: 90%;
+      width: 400px;
+    }
+
+    .event-popup-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .skill-tree {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .skill-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .skill-level {
+      display: flex;
+      align-items: center;
+      margin-top: 0.5rem;
+    }
+
+    .level-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      margin-right: 4px;
+    }
+
+    .level-dot.active {
+      background: var(--primary-color);
+    }
+
+    .event-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .event-button {
+      flex: 1;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .event-button.accept {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .event-button.reject {
+      background: #e2e8f0;
+      color: var(--text-secondary);
+    }
+
+    .event-button:hover {
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        width: 95%;
+        padding: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.75rem;
+      }
+
+      .input-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+      }
+
+      .input-row label {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>💰 实时收入计算器</h2>
+    <div class="tips">
+      ✨ 输入你的工资信息，点击"开始上班"即可实时查看收入增长！
+    </div>
+    <div class="input-row">
+      <label for="salary">每月工资(元)</label>
+      <input type="number" id="salary" min="0" placeholder="如 8000">
+    </div>
+    <div class="input-row">
+      <label for="days">每月上班天数</label>
+      <input type="number" id="days" min="1" max="31" placeholder="如 22">
+    </div>
+    <div class="input-row">
+      <label for="hours">每天工作小时</label>
+      <input type="number" id="hours" min="1" max="24" placeholder="如 8">
+    </div>
+    <button id="startBtn" onclick="startWork()">开始上班</button>
+    <div class="status-text">
+      <span class="status-indicator" id="statusIndicator"></span>
+      <span id="statusText">等待开始...</span>
+    </div>
+    <div class="result-area" id="resultArea">
+      <div class="result-row">
+        <span class="result-label">已上班时间</span>
+        <strong class="result-value" id="workTime">00:00:00</strong>
+      </div>
+      <div class="result-row">
+        <span class="result-label">摸鱼时间</span>
+        <strong class="result-value" id="slackTime">00:00:00</strong>
+      </div>
+      <div class="result-row">
+        <span class="result-label">已赚到</span>
+        <span>
+          <strong class="result-value" id="earned">0.0000</strong>
+          <span style="margin-left: 4px; color: var(--text-secondary);">元</span>
+        </span>
+      </div>
+      <div class="divider"></div>
+      <div class="rate-container">
+        <div class="rate-row">
+          <span class="rate-label">每小时收入</span>
+          <strong class="rate-value" id="rateHour">0.0000 元</strong>
+        </div>
+        <div class="rate-row">
+          <span class="rate-label">每分钟收入</span>
+          <strong class="rate-value" id="rateMin">0.0000 元</strong>
+        </div>
+        <div class="rate-row">
+          <span class="rate-label">每秒钟收入</span>
+          <strong class="rate-value" id="rateSec">0.0000 元</strong>
+        </div>
+      </div>
+      
+      <!-- 游戏化功能区域 -->
+      <div class="game-features">
+        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">游戏功能</h3>
+        
+        <!-- 成就系统 -->
+        <div id="achievements" class="achievements">
+          <h4 style="margin-bottom: 0.5rem;">成就</h4>
+          <div class="achievement">
+            <div class="achievement-icon">🏆</div>
+            <div class="achievement-info">
+              <div class="achievement-name">工作狂</div>
+              <div class="achievement-desc">连续工作4小时不摸鱼</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 技能树 -->
+        <div id="skillTree" class="skill-tree">
+          <div class="skill-card">
+            <h4>效率提升</h4>
+            <div class="skill-level">
+              <div class="level-dot active"></div>
+              <div class="level-dot"></div>
+              <div class="level-dot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let timer = null;
+    let startTimestamp = null;
+    let salary = 0;
+    let days = 0;
+    let hours = 0;
+    let rateHour = 0;
+    let rateMin = 0;
+    let rateSec = 0;
+    let isWorking = false;
+    let isSlacking = false;
+    let slackStartTime = null;
+    let totalSlackTime = 0;
+
+    let achievements = {
+      workaholic: {
+        name: "工作狂",
+        description: "连续工作4小时不摸鱼",
+        reward: "每小时收入+1%",
+        unlocked: false,
+        condition: () => !isSlacking && (Date.now() - startTimestamp) / 3600000 >= 4
+      },
+      timeMaster: {
+        name: "时间管理大师",
+        description: "摸鱼时间不超过总工作时间的10%",
+        reward: "获得双倍收入1小时",
+        unlocked: false,
+        condition: () => totalSlackTime / ((Date.now() - startTimestamp) / 1000) <= 0.1
+      }
+    };
+
+    let randomEvents = {
+      overtime: {
+        name: "加班机会",
+        description: "是否接受加班？收入翻倍但摸鱼惩罚加倍",
+        probability: 0.1,
+        onAccept: () => {
+          rateHour *= 2;
+          updateRateDisplay();
+          setTimeout(() => {
+            rateHour /= 2;
+            updateRateDisplay();
+          }, 3600000); // 1小时后恢复
+        }
+      },
+      bonus: {
+        name: "意外奖金",
+        description: "老板心情好，发放奖金！",
+        probability: 0.05,
+        onAccept: () => {
+          const bonus = salary * 0.1;
+          alert(`恭喜获得奖金：${bonus.toFixed(2)}元！`);
+        }
+      }
+    };
+
+    let skillTree = {
+      efficiency: {
+        name: "效率提升",
+        levels: [
+          { cost: 1000, effect: "收入+5%", purchased: false },
+          { cost: 5000, effect: "收入+10%", purchased: false },
+          { cost: 20000, effect: "收入+20%", purchased: false }
+        ],
+        currentLevel: 0
+      }
+    };
+
+    function startWork() {
+      if (!isWorking) {
+        salary = parseFloat(document.getElementById('salary').value);
+        days = parseInt(document.getElementById('days').value);
+        hours = parseFloat(document.getElementById('hours').value);
+
+        if (!salary || !days || !hours) {
+          alert('请填写完整且有效的工资、天数和小时数！');
+          return;
+        }
+
+        // 计算速率
+        rateHour = salary / (days * hours);
+        rateMin = rateHour / 60;
+        rateSec = rateHour / 3600;
+
+        updateRateDisplay();
+        document.getElementById('startBtn').textContent = '上班中...';
+        document.getElementById('startBtn').classList.add('working-animation');
+        document.getElementById('statusIndicator').classList.add('working');
+        document.getElementById('statusText').textContent = '正在认真工作...';
+        isWorking = true;
+        startTimestamp = Date.now();
+        
+        if (timer) clearInterval(timer);
+        timer = setInterval(updateIncome, 100);
+
+        // 添加摸鱼检测
+        document.addEventListener('mousemove', checkSlacking);
+        document.addEventListener('keydown', checkSlacking);
+      } else {
+        isWorking = false;
+        if (timer) clearInterval(timer);
+        document.getElementById('startBtn').textContent = '开始上班';
+        document.getElementById('startBtn').classList.remove('working-animation', 'slacking-animation');
+        document.getElementById('statusIndicator').classList.remove('working', 'slacking');
+        document.getElementById('statusText').textContent = '等待开始...';
+        
+        // 移除摸鱼检测
+        document.removeEventListener('mousemove', checkSlacking);
+        document.removeEventListener('keydown', checkSlacking);
+      }
+    }
+
+    function checkSlacking() {
+      if (!isWorking) return;
+      
+      if (!isSlacking) {
+        isSlacking = true;
+        slackStartTime = Date.now();
+        document.getElementById('startBtn').classList.remove('working-animation');
+        document.getElementById('startBtn').classList.add('slacking-animation');
+        document.getElementById('statusIndicator').classList.remove('working');
+        document.getElementById('statusIndicator').classList.add('slacking');
+        document.getElementById('statusText').textContent = '摸鱼中...';
+      }
+      
+      // 重置摸鱼检测计时器
+      clearTimeout(slackTimeout);
+      slackTimeout = setTimeout(() => {
+        if (isSlacking) {
+          isSlacking = false;
+          totalSlackTime += (Date.now() - slackStartTime) / 1000;
+          document.getElementById('startBtn').classList.remove('slacking-animation');
+          document.getElementById('startBtn').classList.add('working-animation');
+          document.getElementById('statusIndicator').classList.remove('slacking');
+          document.getElementById('statusIndicator').classList.add('working');
+          document.getElementById('statusText').textContent = '正在认真工作...';
+        }
+      }, 3000); // 3秒无操作判定为摸鱼
+    }
+
+    let slackTimeout = null;
+
+    function updateRateDisplay() {
+      document.getElementById('rateHour').textContent = `${rateHour.toFixed(4)} 元`;
+      document.getElementById('rateMin').textContent = `${rateMin.toFixed(4)} 元`;
+      document.getElementById('rateSec').textContent = `${rateSec.toFixed(4)} 元`;
+    }
+
+    function updateIncome() {
+      const elapsed = (Date.now() - startTimestamp) / 1000;
+      const h = Math.floor(elapsed / 3600);
+      const m = Math.floor((elapsed % 3600) / 60);
+      const s = Math.floor(elapsed % 60);
+
+      document.getElementById('workTime').textContent = 
+        `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      
+      // 更新摸鱼时间显示
+      const slackH = Math.floor(totalSlackTime / 3600);
+      const slackM = Math.floor((totalSlackTime % 3600) / 60);
+      const slackS = Math.floor(totalSlackTime % 60);
+      document.getElementById('slackTime').textContent = 
+        `${slackH.toString().padStart(2, '0')}:${slackM.toString().padStart(2, '0')}:${slackS.toString().padStart(2, '0')}`;
+      
+      const earned = elapsed * rateSec;
+      document.getElementById('earned').textContent = earned.toFixed(4);
+      
+      // 检查成就和随机事件
+      checkAchievements();
+      if (Math.random() < 0.01) { // 1%的概率触发随机事件
+        checkRandomEvents();
+      }
+      
+      // 更新技能树显示
+      updateSkillTree();
+    }
+
+    // 检查成就
+    function checkAchievements() {
+      for (let key in achievements) {
+        const achievement = achievements[key];
+        if (!achievement.unlocked && achievement.condition()) {
+          achievement.unlocked = true;
+          showAchievementUnlocked(achievement);
+        }
+      }
+    }
+
+    // 显示成就解锁
+    function showAchievementUnlocked(achievement) {
+      const popup = document.createElement('div');
+      popup.className = 'event-popup';
+      popup.innerHTML = `
+        <h3>🏆 成就解锁！</h3>
+        <p>${achievement.name}</p>
+        <p>${achievement.description}</p>
+        <p>奖励：${achievement.reward}</p>
+      `;
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 3000);
+    }
+
+    // 随机事件系统
+    function checkRandomEvents() {
+      if (!isWorking) return;
+      
+      for (let key in randomEvents) {
+        const event = randomEvents[key];
+        if (Math.random() < event.probability) {
+          showEventPopup(event);
+        }
+      }
+    }
+
+    // 显示事件弹窗
+    function showEventPopup(event) {
+      const backdrop = document.createElement('div');
+      backdrop.className = 'event-popup-backdrop';
+      
+      const popup = document.createElement('div');
+      popup.className = 'event-popup';
+      popup.innerHTML = `
+        <h3>${event.name}</h3>
+        <p>${event.description}</p>
+        <div class="event-buttons">
+          <button class="event-button accept" onclick="handleEvent(true, '${event.name}')">接受</button>
+          <button class="event-button reject" onclick="handleEvent(false, '${event.name}')">拒绝</button>
+        </div>
+      `;
+      
+      document.body.appendChild(backdrop);
+      document.body.appendChild(popup);
+    }
+
+    // 处理事件选择
+    function handleEvent(accepted, eventName) {
+      const event = randomEvents[eventName.toLowerCase().replace(/\s/g, '')];
+      if (accepted && event.onAccept) {
+        event.onAccept();
+      }
+      document.querySelector('.event-popup-backdrop').remove();
+      document.querySelector('.event-popup').remove();
+    }
+
+    // 更新技能树显示
+    function updateSkillTree() {
+      const skillTreeElement = document.getElementById('skillTree');
+      skillTreeElement.innerHTML = '';
+      
+      for (let key in skillTree) {
+        const skill = skillTree[key];
+        const card = document.createElement('div');
+        card.className = 'skill-card';
+        card.innerHTML = `
+          <h4>${skill.name}</h4>
+          <div class="skill-level">
+            ${skill.levels.map((level, index) => `
+              <div class="level-dot ${index < skill.currentLevel ? 'active' : ''}"></div>
+            `).join('')}
+          </div>
+        `;
+        skillTreeElement.appendChild(card);
+      }
+    }
+
+    // 初始化
+    updateSkillTree();
+  </script>
+</body>
+</html>
